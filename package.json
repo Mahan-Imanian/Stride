@@ -5,12 +5,12 @@
   "type": "module",
   "license": "MIT",
   "author": "Mahan Imanian",
-  "homepage": "https://mahan-imanian.github.io/stride/",
+  "homepage": "https://mahan-imanian.github.io/Stride/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Mahan-Imanian/stride.git"
+    "url": "git+https://github.com/Mahan-Imanian/Stride.git"
   },
-  "bugs": "https://github.com/Mahan-Imanian/stride/issues",
+  "bugs": "https://github.com/Mahan-Imanian/Stride/issues",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
