@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const BASE = process.env.BASE ?? "http://localhost:4173/stride/";
+const BASE = process.env.BASE ?? "http://localhost:4173/Stride/";
 const VERSION = "12.8.2";
 const cli = process.env.LIGHTHOUSE_CLI
   ? ["node", [process.env.LIGHTHOUSE_CLI]]

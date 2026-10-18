@@ -191,7 +191,7 @@ export function Explore() {
       <footer className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-rule pt-6 text-sm text-ink-3">
         <span>Stride · MIT licensed</span>
         <a
-          href="https://github.com/Mahan-Imanian/stride"
+          href="https://github.com/Mahan-Imanian/Stride"
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center gap-1.5 hover:text-ink"
