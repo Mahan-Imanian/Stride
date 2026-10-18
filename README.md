@@ -33,7 +33,7 @@ Run two algorithms, or two settings of one, on the same grid. The overlay shows 
 
 <img alt="The Compare panel after Dijkstra and A* finish: both paths cost 46, A* expanded 295 cells to Dijkstra's 658, 55% fewer, and the two orders diverge at (12, 4)" src=".github/assets/f-compare.png" width="100%">
 
-<img alt="Playback of the same run: the overlay, Dijkstra's pseudocode, its min-heap and both captions advance together until A* reaches the target first" src="docs/screenshots/compare.gif" width="100%">
+<img alt="Playback of the same run from step 0: the overlay, Dijkstra's pseudocode, its min-heap and both captions advance together until both paths are found, then the Compare panel shows the verdict" src="docs/screenshots/compare.gif" width="100%">
 
 ### See the structure the algorithm is deciding from
 
@@ -41,7 +41,7 @@ The BFS queue, DFS stack, Dijkstra's min-heap (stale entries included), A\*'s op
 
 <img alt="Dijkstra 61 steps in: expanded cells and the frontier on the grid, the pq.push line highlighted, and the min-heap ordered by distance with 18 entries waiting" src=".github/assets/f-heap.png" width="100%">
 
-<img alt="The caption 'Discover (5, 8) · dist 9' beside the highlighted pseudocode line, the current cell and the heap entry (4, 6) that is settled next" src=".github/assets/f-caption.png" width="100%">
+<img alt="The same Dijkstra step in the light theme: the caption 'Discover (5, 8) · dist 9', the highlighted pseudocode line, the current cell and the heap entry (4, 6) that is settled next" src=".github/assets/f-caption.png" width="100%">
 
 <img alt="Quicksort placing pivot 21 at index 5: lo, i and hi pointers under the bars, the active range shaded, and a call stack five calls deep" src=".github/assets/f-quicksort.png" width="100%">
 
@@ -51,7 +51,7 @@ The BFS queue, DFS stack, Dijkstra's min-heap (stale entries included), A\*'s op
 
 Explore lists 14 prepared experiments, each with a question such as _Why does breadth-first search always find the fewest moves?_ or _On nearly sorted data, can a quadratic sort beat merge sort?_ The input is built and the run is recorded when you open one. Change a wall, the pivot rule, the heuristic or the learning rate and the run is recorded again.
 
-<img alt="The Explore page: the first six prepared experiments, each titled with its question and the algorithms it runs" src=".github/assets/f-explore.png" width="100%">
+<img alt="The Explore page: the intro next to a finished A* versus Dijkstra run, with the first prepared experiments below, each titled with its question" src=".github/assets/f-explore.png" width="100%">
 
 In _Bad starting centroids_, k-means++ settles at inertia 1.657 after 2 iterations, while centroids started in a corner settle at 7.718 after 4, with one cluster left empty.
 
@@ -61,7 +61,7 @@ In _Bad starting centroids_, k-means++ settles at inertia 1.657 after 2 iteratio
 
 Press <kbd>P</kbd> for presentation mode: full screen, large type, and toggles for code, state, explanation and metrics. Every experiment is a link: input, seed, settings and optionally the current step are encoded in the URL, and JSON export uses the same format.
 
-<img alt="Presentation mode at 1600 by 900: BFS in a maze with the live queue and the caption in large type" src=".github/assets/f-present.png" width="100%">
+<img alt="Presentation mode: BFS in a maze with the live queue and the caption in large type" src=".github/assets/f-present.png" width="100%">
 
 ## Quick start
 
@@ -151,8 +151,6 @@ CI runs lint, typecheck, tests and both builds on every push and pull request to
 - No data-structure family (BST, hash table) and no Bellman-Ford or topological sort yet.
 
 See the [changelog](CHANGELOG.md) for what changed between versions.
-
-Stride was called Algoscope until October 2026, and the repository was `ML-Algorithm-Visualizer`. GitHub redirects the old repository URL, but the old site at `/ML-Algorithm-Visualizer/` no longer exists. A link shared from it can still be opened by pasting it into **Import experiment** in the ⋯ menu, and files exported under the old name still import. Settings and saved experiments carry over because the origin is the same and the storage keys did not change.
 
 ## License
 
