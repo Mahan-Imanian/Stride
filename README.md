@@ -4,14 +4,14 @@
 </picture>
 
 <p align="center">
-  <a href="https://github.com/Mahan-Imanian/stride/actions/workflows/ci.yml"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/Mahan-Imanian/stride/ci.yml?branch=main&style=flat-square&label=CI"></a>
-  <a href="https://github.com/Mahan-Imanian/stride/actions/workflows/deploy.yml"><img alt="Deploy status" src="https://img.shields.io/github/actions/workflow/status/Mahan-Imanian/stride/deploy.yml?branch=main&style=flat-square&label=deploy"></a>
+  <a href="https://github.com/Mahan-Imanian/Stride/actions/workflows/ci.yml"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/Mahan-Imanian/Stride/ci.yml?branch=main&style=flat-square&label=CI"></a>
+  <a href="https://github.com/Mahan-Imanian/Stride/actions/workflows/deploy.yml"><img alt="Deploy status" src="https://img.shields.io/github/actions/workflow/status/Mahan-Imanian/Stride/deploy.yml?branch=main&style=flat-square&label=deploy"></a>
   <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-3d7bfd?style=flat-square"></a>
-  <a href="https://mahan-imanian.github.io/stride/"><img alt="Open the live demo" src="https://img.shields.io/badge/live_demo-open-ff6a3d?style=flat-square"></a>
+  <a href="https://mahan-imanian.github.io/Stride/"><img alt="Open the live demo" src="https://img.shields.io/badge/live_demo-open-ff6a3d?style=flat-square"></a>
 </p>
 
 <p align="center">
-  <a href="https://mahan-imanian.github.io/stride/"><b>Open the lab</b></a> ·
+  <a href="https://mahan-imanian.github.io/Stride/"><b>Open the lab</b></a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#what-you-can-do">Features</a> ·
   <a href="#algorithms">Algorithms</a> ·
@@ -21,7 +21,7 @@
 
 <br>
 
-<a href="https://mahan-imanian.github.io/stride/"><img alt="The lab 162 steps into Dijkstra and A* on one grid: both expansions overlaid, Dijkstra's pseudocode on the pq.push line, its min-heap with 18 entries, and a caption for each run" src=".github/assets/showcase.png" width="100%"></a>
+<a href="https://mahan-imanian.github.io/Stride/"><img alt="The lab 162 steps into Dijkstra and A* on one grid: both expansions overlaid, Dijkstra's pseudocode on the pq.push line, its min-heap with 18 entries, and a caption for each run" src=".github/assets/showcase.png" width="100%"></a>
 
 Stride records every operation of a run and plays it back next to the data structure the algorithm reads from, such as the BFS queue, Dijkstra's heap or quicksort's call stack. Each step has a caption with the actual values, and two algorithms can run on the same input so their counts can be compared directly.
 
@@ -65,16 +65,16 @@ Press <kbd>P</kbd> for presentation mode: full screen, large type, and toggles f
 
 ## Quick start
 
-Open the [hosted lab](https://mahan-imanian.github.io/stride/), or run it locally with Node 20 or newer:
+Open the [hosted lab](https://mahan-imanian.github.io/Stride/), or run it locally with Node 20 or newer:
 
 ```bash
-git clone https://github.com/Mahan-Imanian/stride.git
-cd stride
+git clone https://github.com/Mahan-Imanian/Stride.git
+cd Stride
 npm install
 npm run dev
 ```
 
-Then open http://localhost:5173/stride/.
+Then open http://localhost:5173/Stride/.
 
 ## Algorithms
 
