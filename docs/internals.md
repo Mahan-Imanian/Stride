@@ -78,7 +78,7 @@ npx vite preview --port 4173 --strictPort
 CHROME_PATH="/path/to/chrome" npm run perf
 ```
 
-`npm run perf -- bfs` runs only the cases whose name contains `bfs`. `BASE` overrides the URL (default `http://localhost:4173/stride/`), and `THROTTLE=4` slows the CPU fourfold through DevTools.
+`npm run perf -- bfs` runs only the cases whose name contains `bfs`. `BASE` overrides the URL (default `http://localhost:4173/Stride/`), and `THROTTLE=4` slows the CPU fourfold through DevTools.
 
 For each of the 18 algorithms, 3 prepared comparisons and 2 comparisons on the 61×37 grid, at 1× and 4×, it plays the run for up to 8 s at 1440×900 and reports: `requestAnimationFrame` intervals (median, 95th percentile, worst, count over 25 ms), long tasks, the number of distinct boxes each canvas had, the largest single canvas draw and the highest React render rate from the frame monitor, JS heap, page errors and requests to other origins.
 

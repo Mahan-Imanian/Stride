@@ -264,7 +264,7 @@ export function Header({ route }: { route: "explore" | "lab" | "saved" }) {
             <MenuItem
               onSelect={() =>
                 window.open(
-                  "https://github.com/Mahan-Imanian/stride",
+                  "https://github.com/Mahan-Imanian/Stride",
                   "_blank",
                   "noopener",
                 )
