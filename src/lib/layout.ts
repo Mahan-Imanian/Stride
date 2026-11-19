@@ -6,7 +6,13 @@ const WIDE_MIN_PX = 1280;
 const MEDIUM_MIN_PX = 1024;
 const COMPACT_BELOW_PX = 768;
 
-export const STAGE_ROWS_PX = { caption: 104, legend: 28, transport: 88, phoneTransport: 148 };
+export const STAGE_ROWS_PX = {
+  caption: 104,
+  captionCompare: 132,
+  legend: 28,
+  transport: 88,
+  phoneTransport: 148,
+};
 export const PRESENT_ROWS_PX = { header: 64, caption: 132, transport: 104 };
 
 export function layoutFor(width: number): LayoutMode {

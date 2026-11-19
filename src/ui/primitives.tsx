@@ -123,7 +123,10 @@ export function Segmented<T extends string>({
       value={value}
       onValueChange={(v) => v && onChange(v as T)}
       aria-label={label}
-      className={cn("inline-flex rounded border border-rule-strong bg-sunken p-0.5", className)}
+      className={cn(
+        "inline-flex max-w-full rounded border border-rule-strong bg-sunken p-0.5",
+        className,
+      )}
     >
       {options.map((o) => (
         <ToggleGroup.Item
@@ -133,7 +136,7 @@ export function Segmented<T extends string>({
           disabled={o.disabled}
           aria-label={typeof o.label === "string" ? undefined : o.title}
           className={cn(
-            "inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-sm px-2.5 font-medium text-ink-2 transition-colors duration-fast hover:text-ink disabled:opacity-40 data-[state=on]:bg-surface data-[state=on]:text-ink data-[state=on]:shadow-inset",
+            "inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 overflow-hidden whitespace-nowrap rounded-sm px-2.5 font-medium text-ink-2 transition-colors duration-fast hover:text-ink disabled:opacity-40 data-[state=on]:bg-surface data-[state=on]:text-ink data-[state=on]:shadow-inset",
             size === "sm" ? "h-6 text-xs" : "h-7 text-sm",
           )}
         >

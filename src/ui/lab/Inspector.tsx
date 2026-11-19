@@ -35,18 +35,21 @@ function WhichToggle({ which, set }: { which: "a" | "b"; set: (w: "a" | "b") => 
           {
             value: "a",
             label: (
-              <span className="flex items-center gap-1.5">
-                <TagAB which="a" className="h-4 w-4" />
-                {variantLabel(exp.a)}
+              <span className="flex min-w-0 items-center gap-1.5" title={variantLabel(exp.a)}>
+                <TagAB which="a" className="h-4 w-4 shrink-0" />
+                <span className="truncate">{variantLabel(exp.a)}</span>
               </span>
             ),
           },
           {
             value: "b",
             label: (
-              <span className="flex items-center gap-1.5">
-                <TagAB which="b" className="h-4 w-4" />
-                {exp.b ? variantLabel(exp.b) : ""}
+              <span
+                className="flex min-w-0 items-center gap-1.5"
+                title={exp.b ? variantLabel(exp.b) : undefined}
+              >
+                <TagAB which="b" className="h-4 w-4 shrink-0" />
+                <span className="truncate">{exp.b ? variantLabel(exp.b) : ""}</span>
               </span>
             ),
           },

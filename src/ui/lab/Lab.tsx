@@ -17,11 +17,12 @@ import { useLabRoute } from "./useLabRoute";
 
 function StageColumn() {
   useCommitCounter("stage column");
+  const compare = useLab((s) => !!s.runB);
   return (
     <section
       className="grid min-h-0 min-w-0 bg-field"
       style={{
-        gridTemplateRows: `minmax(0,1fr) ${STAGE_ROWS_PX.caption}px ${STAGE_ROWS_PX.legend}px ${STAGE_ROWS_PX.transport}px`,
+        gridTemplateRows: `minmax(0,1fr) ${compare ? STAGE_ROWS_PX.captionCompare : STAGE_ROWS_PX.caption}px ${STAGE_ROWS_PX.legend}px ${STAGE_ROWS_PX.transport}px`,
       }}
       aria-label="Visualization"
     >
@@ -95,12 +96,12 @@ export function Lab({
         >
           <Stage narrow={compact} />
         </div>
-        <NowCaption />
+        <NowCaption flow />
         <div className="h-7 overflow-hidden border-b border-rule px-4">
           <Legend />
         </div>
         <Inspector inline withSetup />
-        <div className="fixed inset-x-0 bottom-0 z-30 shadow-[0_-8px_24px_-12px_rgb(0_0_0/0.25)]">
+        <div className="fixed inset-x-0 bottom-0 z-30 overflow-x-clip shadow-[0_-8px_24px_-12px_rgb(0_0_0/0.25)]">
           <Transport compact />
         </div>
       </div>

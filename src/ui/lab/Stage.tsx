@@ -142,7 +142,7 @@ function PaneHeader({
   }
   return (
     <div className="flex h-9 shrink-0 items-center gap-4 overflow-hidden whitespace-nowrap border-b border-rule bg-surface px-3">
-      <div className="flex min-w-0 shrink items-center gap-2">
+      <div className="flex min-w-0 max-w-[70%] shrink-0 items-center gap-2">
         {compare && <TagAB which={which} />}
         <span className="truncate text-sm font-medium">{variantLabel(v)}</span>
         {overlay && (
@@ -151,11 +151,11 @@ function PaneHeader({
           </span>
         )}
       </div>
-      <dl className="ml-auto flex shrink-0 items-baseline gap-x-4">
+      <dl className="ml-auto flex h-9 min-w-0 flex-wrap content-start items-center justify-end gap-x-4 overflow-hidden">
         {metrics.map((m, i) => (
           <div
             key={m.label}
-            className={cn("flex items-baseline gap-1.5", i > 1 && "max-sm:hidden")}
+            className={cn("flex h-9 items-baseline gap-1.5 pt-2.5", i > 1 && "max-sm:hidden")}
           >
             <dt className="text-2xs text-ink-3">{m.label}</dt>
             <dd className="readout min-w-[4ch] text-right text-sm tabular-nums text-ink">
@@ -324,7 +324,7 @@ function Pane({
   );
 }
 
-export function NowCaption({ large = false }: { large?: boolean }) {
+export function NowCaption({ large = false, flow = false }: { large?: boolean; flow?: boolean }) {
   useCommitCounter("caption");
   const runA = useLab((s) => s.runA);
   const runB = useLab((s) => s.runB);
@@ -336,10 +336,21 @@ export function NowCaption({ large = false }: { large?: boolean }) {
   return (
     <div
       className={cn(
-        "relative shrink-0 overflow-hidden border-t border-rule bg-surface [contain:strict]",
-        b && "grid grid-cols-2 divide-x divide-rule",
+        "relative shrink-0 border-t border-rule bg-surface",
+        flow ? "min-h-[104px]" : "overflow-hidden [contain:strict]",
+        b && (flow ? "divide-y divide-rule" : "grid grid-cols-2 divide-x divide-rule"),
       )}
-      style={{ height: large ? PRESENT_ROWS_PX.caption : STAGE_ROWS_PX.caption }}
+      style={
+        flow
+          ? undefined
+          : {
+              height: large
+                ? PRESENT_ROWS_PX.caption
+                : b
+                  ? STAGE_ROWS_PX.captionCompare
+                  : STAGE_ROWS_PX.caption,
+            }
+      }
       data-tour="now"
     >
       {editing ? (
@@ -348,8 +359,17 @@ export function NowCaption({ large = false }: { large?: boolean }) {
         </p>
       ) : (
         <>
-          <Line e={a} tag={runB ? "a" : undefined} algo={getAlgo(runA.algo).short} large={large} />
-          {b && runB && <Line e={b} tag="b" algo={getAlgo(runB.algo).short} large={large} />}
+          <Line
+            e={a}
+            tag={runB ? "a" : undefined}
+            algo={getAlgo(runA.algo).short}
+            large={large}
+            flow={flow}
+            wrap={!!runB}
+          />
+          {b && runB && (
+            <Line e={b} tag="b" algo={getAlgo(runB.algo).short} large={large} flow={flow} wrap />
+          )}
         </>
       )}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
@@ -364,11 +384,17 @@ function Line({
   tag,
   algo,
   large,
+  flow = false,
+  wrap = false,
 }: {
   e: ReturnType<typeof explain>;
   tag?: "a" | "b";
   algo: string;
   large: boolean;
+  /** Narrow layout: the caption grows to fit, nothing is cut. */
+  flow?: boolean;
+  /** Two runs side by side: let the title use two lines. */
+  wrap?: boolean;
 }) {
   return (
     <div className="flex min-w-0 gap-3 px-4 py-2.5">
@@ -376,8 +402,10 @@ function Line({
       <div className="min-w-0 flex-1">
         <p
           className={cn(
-            "readout truncate font-medium text-ink",
-            large ? "h-7 text-lg leading-7" : "h-5 text-sm leading-5",
+            "readout font-medium text-ink",
+            flow ? "" : wrap ? "line-clamp-2" : "truncate",
+            large ? "text-lg leading-7" : "text-sm leading-5",
+            !flow && !wrap && (large ? "h-7" : "h-5"),
           )}
           title={e.now}
         >
@@ -386,13 +414,15 @@ function Line({
         </p>
         <p
           className={cn(
-            "mt-1 line-clamp-2 text-ink-2",
-            large ? "h-12 text-md leading-6" : "h-10 text-sm leading-5",
+            "mt-1 text-ink-2",
+            !flow && "line-clamp-2",
+            large ? "text-md leading-6" : "text-sm leading-5",
+            !flow && !wrap && (large ? "h-12" : "h-10"),
           )}
         >
           {e.why}
         </p>
-        <p className="mt-1 h-4 truncate text-xs leading-4 text-ink-3">
+        <p className={cn("mt-1 text-xs leading-4 text-ink-3", !flow && "h-4 truncate")}>
           {e.next && (
             <>
               <span className="label mr-1.5">Next</span>
