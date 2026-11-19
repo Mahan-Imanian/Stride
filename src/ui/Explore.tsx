@@ -32,16 +32,20 @@ function ScenarioTile({ s, compact }: { s: Scenario; compact: boolean }) {
             {s.title}
           </h3>
           <p className="text-sm text-ink-2">{s.question}</p>
-          <p className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 pt-2 text-xs text-ink-3">
+          <p className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 text-xs text-ink-3">
             {exp.b ? (
               <>
-                <TagAB which="a" className="h-4 w-4" />
-                {variantLabel(exp.a)}
-                <TagAB which="b" className="h-4 w-4" />
-                {variantLabel(exp.b)}
+                <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                  <TagAB which="a" className="h-4 w-4" />
+                  {variantLabel(exp.a)}
+                </span>
+                <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                  <TagAB which="b" className="h-4 w-4" />
+                  {variantLabel(exp.b)}
+                </span>
               </>
             ) : (
-              variantLabel(exp.a)
+              <span className="whitespace-nowrap">{variantLabel(exp.a)}</span>
             )}
           </p>
         </div>
