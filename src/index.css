@@ -2,66 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Lecture-hall boards. Light is a porcelain whiteboard, dark is a slate greenboard.
-   Values are RGB channels so Tailwind can apply alpha; the system of record is DESIGN.md. */
+/* Lecture-hall boards. Light is a whiteboard with vivid markers, dark is a charcoal slate
+   blackboard with bright chalk. Values are RGB channels so Tailwind can apply alpha;
+   the system of record is DESIGN.md. */
 :root,
 [data-theme="light"] {
   color-scheme: light;
-  --bg: 244 245 242;
-  --surface: 251 251 249;
+  --bg: 246 246 244;
+  --surface: 255 255 255;
   --field: 255 255 255;
-  --sunken: 234 236 231;
-  --rule: 214 217 211;
-  --rule-strong: 133 139 132;
-  --ink: 27 29 34;
-  --ink-2: 69 74 82;
-  --ink-3: 92 98 107;
-  --action: 27 29 34;
+  --sunken: 236 236 233;
+  --rule: 216 217 214;
+  --rule-strong: 128 133 140;
+  --ink: 23 25 28;
+  --ink-2: 64 69 76;
+  --ink-3: 91 97 106;
+  --action: 23 25 28;
   --on-action: 255 255 255;
-  --hot: 168 116 0;
-  --hot-ink: 128 86 0;
-  --hot-soft: 246 236 207;
-  --focus: 31 95 209;
-  --enc-current: 168 116 0;
-  --enc-heap: 168 116 0;
-  --enc-done: 104 110 118;
-  --enc-path: 31 95 209;
-  --enc-wall: 42 46 53;
-  --enc-wall-edge: 42 46 53;
-  --enc-cost: 128 118 96;
-  --enc-a: 192 58 107;
-  --enc-b: 31 95 209;
-  --grid-line: 230 231 228;
-  --shadow-pop: 0 1px 2px rgb(27 29 34 / 0.08), 0 10px 28px -10px rgb(27 29 34 / 0.24);
+  --hot: 224 112 0;
+  --hot-ink: 160 78 0;
+  --hot-soft: 252 234 214;
+  --focus: 36 86 214;
+  --enc-current: 224 112 0;
+  --enc-heap: 224 112 0;
+  --enc-done: 104 110 120;
+  --enc-path: 23 25 28;
+  --enc-wall: 58 65 76;
+  --enc-wall-edge: 58 65 76;
+  --enc-cost: 150 96 30;
+  --enc-a: 176 48 111;
+  --enc-b: 36 86 214;
+  --grid-line: 231 232 229;
+  --shadow-pop: 0 1px 2px rgb(23 25 28 / 0.08), 0 10px 28px -10px rgb(23 25 28 / 0.24);
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: 23 34 30;
-  --surface: 29 42 37;
-  --field: 27 39 34;
-  --sunken: 18 27 24;
-  --rule: 52 64 59;
-  --rule-strong: 118 128 121;
-  --ink: 238 237 228;
-  --ink-2: 190 196 186;
-  --ink-3: 156 165 153;
-  --action: 238 237 228;
-  --on-action: 23 34 30;
-  --hot: 244 214 94;
-  --hot-ink: 244 214 94;
-  --hot-soft: 60 64 40;
-  --focus: 244 214 94;
-  --enc-current: 244 214 94;
-  --enc-heap: 244 214 94;
-  --enc-done: 150 160 150;
+  --bg: 26 30 36;
+  --surface: 30 35 42;
+  --field: 30 35 42;
+  --sunken: 20 23 28;
+  --rule: 52 57 64;
+  --rule-strong: 120 127 137;
+  --ink: 241 242 244;
+  --ink-2: 196 201 209;
+  --ink-3: 154 161 171;
+  --action: 241 242 244;
+  --on-action: 26 30 36;
+  --hot: 255 210 63;
+  --hot-ink: 255 210 63;
+  --hot-soft: 63 59 40;
+  --focus: 255 210 63;
+  --enc-current: 255 210 63;
+  --enc-heap: 255 210 63;
+  --enc-done: 160 166 176;
   --enc-path: 255 255 255;
-  --enc-wall: 10 16 13;
-  --enc-wall-edge: 122 132 124;
-  --enc-cost: 190 168 118;
-  --enc-a: 243 166 195;
-  --enc-b: 143 200 255;
-  --grid-line: 37 50 44;
+  --enc-wall: 11 13 16;
+  --enc-wall-edge: 125 133 146;
+  --enc-cost: 196 166 72;
+  --enc-a: 255 122 107;
+  --enc-b: 79 209 255;
+  --grid-line: 40 45 52;
   --shadow-pop: 0 1px 0 rgb(0 0 0 / 0.25), 0 12px 32px -10px rgb(0 0 0 / 0.55);
 }
 

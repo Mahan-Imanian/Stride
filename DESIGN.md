@@ -8,7 +8,7 @@ Status: **foundations** (tokens, type, encoding grammar, motion tokens). Canvas 
 
 ## World
 
-Stride is the lecture hall's board. Dark theme is a slate greenboard, light theme is a porcelain whiteboard. The board is the grid, the next board holds the structure the algorithm decides from, and the narration is written along the bottom. The world lends four things only: palette, type, density and one signature move (the board-work trail). It never lends texture, handwriting, chalk-dust images or skeuomorphic frames; navigation and controls stay ordinary web controls.
+Stride is the lecture hall's board. Dark theme is a charcoal slate blackboard with bright chalk, light theme is a whiteboard with vivid markers. (Chosen on 22 November 2026 over three other board palettes, a muted greenboard, a saturated schoolroom green and a midnight navy, because its chalk colours separate hardest on a projector.) The board is the grid, the next board holds the structure the algorithm decides from, and the narration is written along the bottom. The world lends four things only: palette, type, density and one signature move (the board-work trail). It never lends texture, handwriting, chalk-dust images or skeuomorphic frames; navigation and controls stay ordinary web controls.
 
 Light or dark is picked by scene, not taste: a projector in a lit lecture hall reads light chalk on a dark board best, so dark is the presentation default; a student at a laptop in daylight reads the whiteboard.
 
@@ -18,20 +18,20 @@ Tokens live in `src/index.css` as RGB channels, under `:root, [data-theme="light
 
 ### Surfaces and ink
 
-| Token                          | Light (whiteboard)                    | Dark (greenboard)                       | Role                                                                                                            |
-| ------------------------------ | ------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `bg`                           | `244 245 242`                         | `23 34 30`                              | The board: page ground                                                                                          |
-| `surface`                      | `251 251 249`                         | `29 42 37`                              | Raised panels, menus, dialogs                                                                                   |
-| `field`                        | `255 255 255`                         | `27 39 34`                              | Inputs and the open cell on a canvas                                                                            |
-| `sunken`                       | `234 236 231`                         | `18 27 24`                              | Wells, hover fills, the transport track                                                                         |
-| `rule`                         | `214 217 211`                         | `52 64 59`                              | Hairlines between regions                                                                                       |
-| `rule-strong`                  | `133 139 132`                         | `118 128 121`                           | Input borders, separators that must be seen                                                                     |
-| `ink`                          | `27 29 34`                            | `238 237 228`                           | Primary text: marker black, chalk white                                                                         |
-| `ink-2`                        | `69 74 82`                            | `190 196 186`                           | Secondary text                                                                                                  |
-| `ink-3`                        | `92 98 107`                           | `156 165 153`                           | Muted text, still 4.5:1 on every surface                                                                        |
-| `action` / `on-action`         | ink / white                           | chalk / board                           | The one primary button per view: filled with ink                                                                |
-| `hot` / `hot-ink` / `hot-soft` | ochre `168 116 0` / `128 86 0` / tint | chalk yellow `244 214 94` / same / tint | "Look here now": the current step, the heap top, the highlighted code line. `hot-ink` is the text-safe strength |
-| `focus`                        | marker blue `31 95 209`               | chalk yellow                            | Keyboard focus ring                                                                                             |
+| Token                          | Light (whiteboard)                            | Dark (charcoal slate)                   | Role                                                                                                            |
+| ------------------------------ | --------------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `bg`                           | `246 246 244`                                 | `26 30 36`                              | The board: page ground                                                                                          |
+| `surface`                      | `255 255 255`                                 | `30 35 42`                              | Raised panels, menus, dialogs                                                                                   |
+| `field`                        | `255 255 255`                                 | `30 35 42`                              | Inputs and the open cell on a canvas                                                                            |
+| `sunken`                       | `236 236 233`                                 | `20 23 28`                              | Wells, hover fills, the transport track                                                                         |
+| `rule`                         | `216 217 214`                                 | `52 57 64`                              | Hairlines between regions                                                                                       |
+| `rule-strong`                  | `128 133 140`                                 | `120 127 137`                           | Input borders, separators that must be seen                                                                     |
+| `ink`                          | `23 25 28`                                    | `241 242 244`                           | Primary text: marker black, chalk white                                                                         |
+| `ink-2`                        | `64 69 76`                                    | `196 201 209`                           | Secondary text                                                                                                  |
+| `ink-3`                        | `91 97 106`                                   | `154 161 171`                           | Muted text, still 4.5:1 on every surface                                                                        |
+| `action` / `on-action`         | ink / white                                   | chalk / board                           | The one primary button per view: filled with ink                                                                |
+| `hot` / `hot-ink` / `hot-soft` | marker orange `224 112 0` / `160 78 0` / tint | canary chalk `255 210 63` / same / tint | "Look here now": the current step, the heap top, the highlighted code line. `hot-ink` is the text-safe strength |
+| `focus`                        | cobalt `36 86 214`                            | canary chalk                            | Keyboard focus ring                                                                                             |
 
 Rules:
 
@@ -49,22 +49,22 @@ Selection (`hot` at 30%), the text caret (`hot`), scrollbars (`rule-strong`), `a
 
 One grammar for every family (pathfinding, sorting, searching, spanning trees, learning). State is never carried by colour alone; every state differs by shape or texture as well as hue, so a figure survives deuteranopia, protanopia, tritanopia, a washed-out projector and a black-and-white printout.
 
-| Meaning                                                 | Mark                                                         | Token                       |
-| ------------------------------------------------------- | ------------------------------------------------------------ | --------------------------- |
-| Decided (settled, sorted, in the tree, assigned)        | Diagonal line hatch "/" over a faint tint                    | `enc-done`                  |
-| Pending (in the heap, queue or stack; under comparison) | Outline, inset from the cell edge                            | `enc-heap`                  |
-| Current (the element being processed this step)         | Solid fill plus an outer ring                                | `enc-current`               |
-| Result (path, final tree, fitted line)                  | A continuous line with a ground-coloured halo                | `enc-path`                  |
-| Obstacle (wall)                                         | The heaviest solid; in dark, a chalk contour on its boundary | `enc-wall`, `enc-wall-edge` |
-| Cost (mud weight)                                       | Dot stipple; more dots, more cost                            | `enc-cost`                  |
-| Run A in a comparison                                   | "/" hatch and solid path                                     | `enc-a`                     |
-| Run B in a comparison                                   | "\\" hatch and dashed path                                   | `enc-b`                     |
-| Both runs                                               | Cross-hatch in neutral ink                                   | `enc-done`                  |
+| Meaning                                                 | Mark                                                                                      | Token                                   |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------- |
+| Decided (settled, sorted, in the tree, assigned)        | Diagonal line hatch "/" over a faint tint                                                 | `enc-done`                              |
+| Pending (in the heap, queue or stack; under comparison) | Outline, inset from the cell edge                                                         | `enc-heap`                              |
+| Current (the element being processed this step)         | Solid fill plus an outer ring                                                             | `enc-current`                           |
+| Result (path, final tree, fitted line)                  | A continuous line with a ground-coloured halo                                             | `enc-path`                              |
+| Obstacle (wall)                                         | The heaviest solid; in dark, a chalk contour on its boundary                              | `enc-wall`, `enc-wall-edge`             |
+| Cost (mud weight)                                       | Dot stipple; more dots, more cost                                                         | `enc-cost`                              |
+| Run A in a comparison                                   | "/" hatch and solid path                                                                  | `enc-a`                                 |
+| Run B in a comparison                                   | "\\" hatch and dashed path                                                                | `enc-b`                                 |
+| Both runs                                               | A quiet solid neutral tint, distinct from the two runs by being solid rather than hatched | ink at 13% (light), chalk at 20% (dark) |
 
 Rules:
 
 - **Must:** every mark token is at least 3:1 against an open cell (`field`) in both themes, and a wall is separable from an open cell by fill or by its contour. Verified by `contrast.test.ts`.
-- The categorical hues (`enc-heap`, `enc-a`, `enc-b`) pass the dataviz validator's colour-vision checks in both themes (worst ΔE 8.8 protan dark, 10.9 deutan light). `enc-done` and `enc-cost` are deliberately neutral; they are told apart by texture (lines against dots), never by colour.
+- The categorical hues (`enc-heap`, `enc-a`, `enc-b`) pass the dataviz validator's colour-vision checks in both themes (worst ΔE 16.2 deutan dark, 17.0 protan light). Run A is coral (dark) or berry (light), run B is cyan or cobalt, the heap is canary or orange. A third hue for "both runs" was tried and rejected: every candidate violet collided with run B under deuteranopia. `enc-done` and `enc-cost` are deliberately neutral; they are told apart by texture (lines against dots), never by colour.
 - No red and green pair is used for any meaning.
 - Every encoding a learner must decode has a visible legend, always available beside the view.
 

@@ -41,6 +41,10 @@ What a neighbouring visualizer cannot truthfully copy: full recorded traces with
 - No new heavy dependencies (charting, component or animation libraries) without explicit approval.
 - Input sizes are capped (61×37 grids, 64 values, 400 points) so recording stays fast.
 - Known gaps: no BST, hash table, Bellman-Ford or topological sort; frame times measured only in headless Chrome.
+- Lecture and study features confirmed for the redesign (22 November 2026), all static and serverless:
+  - In the room: real fullscreen when playing, with a blank-board key (B); presentation-remote (clicker) support through PageUp, PageDown and arrow keys; a presenter view in a second window on the same device (notes, next step, invariant) while the projector shows the clean board; pause-and-predict stops at chosen steps and asks the room to pick the next cell before revealing it.
+  - Board tools: a laser-style pointer and a spotlight that dims all but one region; a pen for drawing on the run (cleared on step unless pinned); a step playlist of bookmarked steps clicked through like slides and saved in the share link; zoom into a large grid or graph.
+  - For students: a QR code for the exact experiment and step (hand-written encoder, no dependency); predict-before-running prompts per experiment; offline use through a service worker on the hosted site; a hide-the-answer toggle for captions, path and verdict.
 
 ## Brand Commitments
 

@@ -4,7 +4,7 @@
 
 ### Redesign: lecture-hall boards (in progress)
 
-- New visual system recorded in [DESIGN.md](DESIGN.md): a slate greenboard dark theme and a porcelain whiteboard light theme, replacing the cream and vermilion palette.
+- New visual system recorded in [DESIGN.md](DESIGN.md): a charcoal slate blackboard dark theme with bright chalk and a whiteboard light theme with vivid markers, replacing the cream and vermilion palette.
 - Type is Atkinson Hyperlegible Next and Mono, self-hosted as woff2 (Latin and Latin Extended), replacing IBM Plex. The built site drops from 1.5 MB to 749 KB because the Cyrillic subsets and woff fallbacks are gone.
 - Labels are sentence case at 13px bold instead of uppercase tracked mono.
 - Colour tokens are renamed by meaning: `action` for the primary button, `hot` for "look here now", and `enc-*` for the canvas encoding. Every encoding mark is now tested at 3:1 or better against an open cell in both themes.
