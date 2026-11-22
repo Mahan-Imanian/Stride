@@ -114,7 +114,7 @@ export function PerfHud() {
             key={b.hz}
             className={cn(
               "readout flex-1 border px-1 py-0.5 text-center text-2xs",
-              s && work <= b.ms ? "border-st-path text-st-path" : "border-rule text-ink-3",
+              s && work <= b.ms ? "border-enc-path text-enc-path" : "border-rule text-ink-3",
             )}
             title={`Largest single draw ${work.toFixed(2)} ms against a ${b.ms.toFixed(1)} ms frame budget`}
           >

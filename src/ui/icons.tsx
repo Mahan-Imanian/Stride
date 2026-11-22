@@ -249,8 +249,8 @@ export function Mark({ size = 24 }: { size?: number }) {
       aria-hidden="true"
       focusable="false"
     >
-      <path d="M2 14V5h3v3h3v3h3v3z" fill="rgb(var(--st-closed))" />
-      <path d="M2 2h3v3H2zM5 5h3v3H5zM8 8h3v3H8zM11 11h3v3h-3z" fill="rgb(var(--signal))" />
+      <path d="M2 14V5h3v3h3v3h3v3z" fill="rgb(var(--enc-done))" />
+      <path d="M2 2h3v3H2zM5 5h3v3H5zM8 8h3v3H8zM11 11h3v3h-3z" fill="rgb(var(--enc-current))" />
       <path d="M2 11h3v3H2z" fill="currentColor" />
       <path d="M11 2h3v3h-3zM12 3v1h1V3z" fill="currentColor" fillRule="evenodd" />
     </svg>

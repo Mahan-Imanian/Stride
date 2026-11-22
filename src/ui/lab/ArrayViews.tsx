@@ -71,10 +71,10 @@ function sortTargets(s: SortState, p: Palette, algo: string): Target[] {
     mark(s.compare.j, s.compare.buf, p.open);
   }
   if (s.swap) {
-    mark(s.swap[0], false, p.signal);
-    mark(s.swap[1], false, p.signal);
+    mark(s.swap[0], false, p.current);
+    mark(s.swap[1], false, p.current);
   }
-  if (s.write !== null) mark(s.write, false, p.signal);
+  if (s.write !== null) mark(s.write, false, p.current);
   return out;
 }
 
@@ -197,7 +197,7 @@ function drawSort(
     ctx.fillStyle = p.sunken;
     ctx.fillRect(0, 0, s.ptr.end * slot, mainH);
     ctx.fillStyle = p.ink3;
-    ctx.font = '10px "IBM Plex Mono", monospace';
+    ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     ctx.fillText("heap", 4, 4);
@@ -209,13 +209,13 @@ function drawSort(
     ctx.lineTo(W, bufTop - 5.5);
     ctx.stroke();
     ctx.fillStyle = p.ink3;
-    ctx.font = '10px "IBM Plex Mono", monospace';
+    ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     ctx.fillText("buffer", 0, bufTop);
   }
   let moving = false;
-  ctx.font = '10px "IBM Plex Mono", monospace';
+  ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
   ctx.textAlign = "center";
   ctx.textBaseline = "bottom";
   for (let id = 0; id < n; id++) {
@@ -271,7 +271,7 @@ function drawSort(
     if (Math.abs(target - x) > 0.3) moving = true;
     ptrPos.set(name, Math.abs(target - x) > 0.3 ? x : target);
     const isRange = name === "lo" || name === "hi" || name === "end";
-    ctx.fillStyle = name === "pivot" ? p.ink : isRange ? p.ink3 : p.signal;
+    ctx.fillStyle = name === "pivot" ? p.ink : isRange ? p.ink3 : p.current;
     ctx.beginPath();
     ctx.moveTo(x, baseY);
     ctx.lineTo(x - 4, baseY + 6);
@@ -394,7 +394,7 @@ function drawSearch(
     ctx.fillStyle = p.sunken;
     ctx.fillRect(a.lo * slot, 0, Math.max(0, (a.hi - a.lo + 1) * slot), area);
   }
-  ctx.font = '10px "IBM Plex Mono", monospace';
+  ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
   ctx.textAlign = "center";
   ctx.textBaseline = "bottom";
   for (let i = 0; i < n; i++) {
@@ -413,16 +413,16 @@ function drawSearch(
     }
   }
   const ty = Math.round(area - (s.target / max) * (area - 16)) + 0.5;
-  ctx.strokeStyle = p.signal;
+  ctx.strokeStyle = p.current;
   ctx.setLineDash([4, 3]);
   ctx.beginPath();
   ctx.moveTo(0, ty);
   ctx.lineTo(W, ty);
   ctx.stroke();
   ctx.setLineDash([]);
-  ctx.fillStyle = p.signal;
+  ctx.fillStyle = p.current;
   ctx.textAlign = "right";
-  ctx.font = '11px "IBM Plex Mono", monospace';
+  ctx.font = '11px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
   ctx.fillText(`target ${s.target}`, W - 2, ty - 4);
   const baseY = H - PTR_H + 6;
   ctx.strokeStyle = p.ruleStrong;
@@ -434,8 +434,8 @@ function drawSearch(
   if (!s.done && s.hi >= s.lo) {
     marks.push(["lo", a.lo, p.ink3], ["hi", a.hi, p.ink3]);
   }
-  if (s.probe >= 0 && (!s.done || s.found >= 0)) marks.push(["probe", a.probe, p.signal]);
-  ctx.font = '10px "IBM Plex Mono", monospace';
+  if (s.probe >= 0 && (!s.done || s.found >= 0)) marks.push(["probe", a.probe, p.current]);
+  ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
   const labels: { x: number; names: string[] }[] = [];
   for (const [name, at, color] of marks) {
     const x = at * slot + slot / 2;

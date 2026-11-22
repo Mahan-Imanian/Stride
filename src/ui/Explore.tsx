@@ -68,12 +68,12 @@ export function Explore() {
             Run an algorithm one step at a time, with its queue, heap or call stack beside it.
           </h1>
           <p className="mt-4 max-w-[52ch] text-md text-ink-2">
-            Stride records each operation of a run, so you can scrub forward and backward while
-            the pseudocode highlights the line that ran. Two algorithms can run on the same input
-            for comparison, and a link reopens the exact setup.
+            Stride records each operation of a run, so you can scrub forward and backward while the
+            pseudocode highlights the line that ran. Two algorithms can run on the same input for
+            comparison, and a link reopens the exact setup.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
-            <Button variant="signal" size="lg" onClick={startTour}>
+            <Button variant="primary" size="lg" onClick={startTour}>
               Take the 6-step tour
             </Button>
             <Button variant="outline" size="lg" onClick={() => navigate("/lab")}>
@@ -98,10 +98,10 @@ export function Explore() {
           />
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-rule px-3 py-2 text-xs text-ink-2">
             <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 bg-st-closed" /> both expanded
+              <span className="h-2.5 w-2.5 bg-enc-done" /> both expanded
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 bg-st-a/45" /> only Dijkstra
+              <span className="h-2.5 w-2.5 bg-enc-a/45" /> only Dijkstra
             </span>
             <span className="ml-auto text-ink group-hover:underline group-hover:underline-offset-4">
               Open A* vs Dijkstra →

@@ -64,9 +64,9 @@ export function Lab({
   const banner = error && (
     <div
       role="alert"
-      className="flex items-start gap-3 border-b border-signal/40 bg-signal-soft px-4 py-2.5 text-sm"
+      className="flex items-start gap-3 border-b border-action/40 bg-hot-soft px-4 py-2.5 text-sm"
     >
-      <Warn className="mt-0.5 shrink-0 text-signal-ink" />
+      <Warn className="mt-0.5 shrink-0 text-hot-ink" />
       <p className="flex-1">{error} A default experiment is loaded instead.</p>
       <Button size="sm" variant="ghost" onClick={() => navigate("/")}>
         Explore

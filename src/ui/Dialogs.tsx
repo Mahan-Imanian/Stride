@@ -243,7 +243,7 @@ export function ImportDialog() {
           </div>
         </form>
         {error && (
-          <p role="alert" className="border-l-2 border-signal pl-3 text-sm text-signal-ink">
+          <p role="alert" className="border-l-2 border-action pl-3 text-sm text-hot-ink">
             {error}
           </p>
         )}
@@ -306,7 +306,7 @@ export function ShortcutsDialog() {
           S places the start, T places the target.
         </p>
         {!singleKey && (
-          <p className="mt-2 text-signal-ink">Single-key shortcuts are turned off in Settings.</p>
+          <p className="mt-2 text-hot-ink">Single-key shortcuts are turned off in Settings.</p>
         )}
       </div>
     </Dialog>
@@ -379,7 +379,7 @@ export function SettingsDialog() {
               setConfirm(false);
               toast("Saved experiments cleared");
             }}
-            className={confirm ? "text-signal-ink" : undefined}
+            className={confirm ? "text-hot-ink" : undefined}
           >
             {confirm ? `Really delete ${count}?` : "Clear saved experiments"}
           </Button>

@@ -78,7 +78,7 @@ function GraphTools() {
         ]}
       />
       {parts > 1 && (
-        <p className="text-xs text-signal-ink">
+        <p className="text-xs text-hot-ink">
           The graph has {parts} disconnected parts, so the algorithms build a spanning forest.
         </p>
       )}

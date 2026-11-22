@@ -28,8 +28,8 @@ export function CodePanel({ run, cursor, tone }: { run: Run; cursor: number; ton
               "relative flex items-start border-l-[3px] py-0.5 transition-[background-color,border-color] duration-med ease-out",
               active
                 ? tone === "b"
-                  ? "border-st-b bg-st-b/10"
-                  : "border-signal bg-signal/10"
+                  ? "border-enc-b bg-enc-b/10"
+                  : "border-action bg-action/10"
                 : "border-transparent",
             )}
           >

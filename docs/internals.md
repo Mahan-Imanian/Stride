@@ -156,7 +156,7 @@ How each constant was chosen is stated as it happened: most were set by hand whi
 
 - Two themes from one token set in `src/index.css`: _Paper_ (warm off-white, ink, hairline rules) and _Scope_ (graphite). Tokens are RGB channels so Tailwind opacity modifiers work (`<alpha-value>` in `tailwind.config.ts`).
 - One signal colour (vermilion) marks the current cell, the active pseudocode line and the Run button. Algorithm states keep a fixed hue on every surface: amber frontier, steel expanded, green path, ink walls, hatched mud. Runs A and B are terracotta and cobalt everywhere.
-- IBM Plex Sans and Mono, self-hosted through `@fontsource`. Numbers use tabular mono figures.
+- Atkinson Hyperlegible Next and Mono (Braille Institute), self-hosted woff2 from `@fontsource`, Latin and Latin Extended only. Numbers use tabular mono figures.
 - Panels are separated by 1 px rules; radii are 2–6 px; only popovers have a shadow.
 - The mark and the 16 px icon set are drawn in-house (`src/ui/icons.tsx`, `scripts/make-images.mjs`).
 

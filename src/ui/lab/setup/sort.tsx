@@ -97,7 +97,7 @@ export function SortProblem({ exp, reseed }: { exp: SortExp; reseed: React.React
               aria-describedby={error ? "custom-error" : undefined}
               className={cn(
                 "readout h-8 min-w-0 flex-1 rounded border bg-surface px-2 text-sm",
-                error ? "border-signal" : "border-rule-strong",
+                error ? "border-action" : "border-rule-strong",
               )}
               spellCheck={false}
             />
@@ -105,7 +105,7 @@ export function SortProblem({ exp, reseed }: { exp: SortExp; reseed: React.React
           </div>
         </Field>
         {error && (
-          <p id="custom-error" role="alert" className="-mt-3 text-xs text-signal-ink">
+          <p id="custom-error" role="alert" className="-mt-3 text-xs text-hot-ink">
             {error}
           </p>
         )}

@@ -50,12 +50,12 @@ export function AboutPanel({ algo }: { algo: AlgoId }) {
       <ul className="space-y-1 text-sm">
         {info.props.map((p) => (
           <li key={p.label} className="flex items-center gap-2">
-            {p.value ? <Check className="text-st-path" /> : <Close className="text-ink-3" />}
+            {p.value ? <Check className="text-enc-path" /> : <Close className="text-ink-3" />}
             <span className={p.value ? "" : "text-ink-2"}>{p.label}</span>
           </li>
         ))}
       </ul>
-      <p className="border-l-2 border-signal pl-3 text-sm">{info.watch}</p>
+      <p className="border-l-2 border-action pl-3 text-sm">{info.watch}</p>
       <div className="border-t border-rule">
         {(
           [
@@ -200,8 +200,8 @@ function SeriesChart({ a, b }: { a: Run; b: Run }) {
           {log ? " · log scale" : ""} per step
         </span>
         <span className="flex items-center gap-2 normal-case tracking-normal">
-          <span className="h-0.5 w-4 bg-st-a" /> A
-          <span className="h-0.5 w-4 bg-st-b" /> B
+          <span className="h-0.5 w-4 bg-enc-a" /> A
+          <span className="h-0.5 w-4 bg-enc-b" /> B
         </span>
       </figcaption>
       <svg
@@ -214,14 +214,14 @@ function SeriesChart({ a, b }: { a: Run; b: Run }) {
         <path
           d={line(sa)}
           fill="none"
-          stroke="rgb(var(--st-a))"
+          stroke="rgb(var(--enc-a))"
           strokeWidth="1.75"
           vectorEffect="non-scaling-stroke"
         />
         <path
           d={line(sb)}
           fill="none"
-          stroke="rgb(var(--st-b))"
+          stroke="rgb(var(--enc-b))"
           strokeWidth="1.75"
           vectorEffect="non-scaling-stroke"
         />
@@ -240,8 +240,8 @@ export function TagAB({ which, className }: { which: "a" | "b"; className?: stri
   return (
     <span
       className={cn(
-        "readout inline-flex h-5 w-5 items-center justify-center rounded-sm text-2xs font-semibold text-signal-on",
-        which === "a" ? "bg-st-a" : "bg-st-b",
+        "readout inline-flex h-5 w-5 items-center justify-center rounded-sm text-2xs font-semibold text-action-on",
+        which === "a" ? "bg-enc-a" : "bg-enc-b",
         className,
       )}
       aria-label={which === "a" ? "Run A" : "Run B"}
@@ -286,7 +286,7 @@ export function LogPanel({ run, cursor, which }: { run: Run; cursor: number; whi
                 aria-current={isCurrent ? "step" : undefined}
                 className={cn(
                   "flex w-full gap-3 rounded-sm px-2 py-1 text-left hover:bg-sunken",
-                  isCurrent ? "bg-signal/10 text-ink" : done ? "text-ink-2" : "text-ink-3",
+                  isCurrent ? "bg-action/10 text-ink" : done ? "text-ink-2" : "text-ink-3",
                 )}
               >
                 <span className="w-10 shrink-0 text-right tabular-nums">{i + 1}</span>

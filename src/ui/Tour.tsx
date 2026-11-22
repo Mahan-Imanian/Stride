@@ -155,7 +155,7 @@ function Coachmark({
       {rect && (
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed z-[60] rounded-sm outline outline-2 outline-offset-4 outline-signal transition-all duration-med ease-out"
+          className="pointer-events-none fixed z-[60] rounded-sm outline outline-2 outline-offset-4 outline-action transition-all duration-med ease-out"
           style={{ top: rect.top, left: rect.left, width: rect.width, height: rect.height }}
         />
       )}

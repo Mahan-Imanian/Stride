@@ -2,93 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Lecture-hall boards. Light is a porcelain whiteboard, dark is a slate greenboard.
+   Values are RGB channels so Tailwind can apply alpha; the system of record is DESIGN.md. */
 :root,
 [data-theme="light"] {
   color-scheme: light;
-  --bg: 239 237 230;
-  --surface: 248 247 243;
-  --field: 252 251 248;
-  --sunken: 232 229 220;
-  --rule: 211 207 195;
-  --rule-strong: 176 171 158;
-  --ink: 24 26 25;
-  --ink-2: 66 69 70;
-  --ink-3: 98 101 96;
-  --signal: 200 62 20;
-  --signal-ink: 168 48 12;
-  --on-signal: 255 255 255;
-  --signal-soft: 248 222 210;
-  --focus: 22 89 199;
-  --st-open: 227 161 38;
-  --st-closed: 178 203 214;
-  --st-path: 26 128 84;
-  --st-wall: 43 45 44;
-  --st-weight: 222 211 184;
-  --st-a: 196 84 38;
-  --st-b: 44 92 190;
-  --grid-line: 228 224 213;
-  --dur-fast: 120ms;
-  --dur-med: 200ms;
-  --dur-slow: 320ms;
-  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --bg: 244 245 242;
+  --surface: 251 251 249;
+  --field: 255 255 255;
+  --sunken: 234 236 231;
+  --rule: 214 217 211;
+  --rule-strong: 133 139 132;
+  --ink: 27 29 34;
+  --ink-2: 69 74 82;
+  --ink-3: 92 98 107;
+  --action: 27 29 34;
+  --on-action: 255 255 255;
+  --hot: 168 116 0;
+  --hot-ink: 128 86 0;
+  --hot-soft: 246 236 207;
+  --focus: 31 95 209;
+  --enc-current: 168 116 0;
+  --enc-heap: 168 116 0;
+  --enc-done: 104 110 118;
+  --enc-path: 31 95 209;
+  --enc-wall: 42 46 53;
+  --enc-wall-edge: 42 46 53;
+  --enc-cost: 128 118 96;
+  --enc-a: 192 58 107;
+  --enc-b: 31 95 209;
+  --grid-line: 230 231 228;
+  --shadow-pop: 0 1px 2px rgb(27 29 34 / 0.08), 0 10px 28px -10px rgb(27 29 34 / 0.24);
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: 13 15 16;
-  --surface: 20 23 25;
-  --field: 16 19 20;
-  --sunken: 27 31 33;
-  --rule: 42 48 51;
-  --rule-strong: 66 74 78;
-  --ink: 232 234 228;
-  --ink-2: 178 183 176;
-  --ink-3: 138 144 137;
-  --signal: 255 106 61;
-  --signal-ink: 255 142 106;
-  --on-signal: 13 15 16;
-  --signal-soft: 64 32 22;
-  --focus: 110 168 255;
-  --st-open: 215 154 46;
-  --st-closed: 38 70 82;
-  --st-path: 61 214 140;
-  --st-wall: 54 61 66;
-  --st-weight: 52 47 34;
-  --st-a: 232 130 88;
-  --st-b: 120 156 245;
-  --grid-line: 30 35 38;
+  --bg: 23 34 30;
+  --surface: 29 42 37;
+  --field: 27 39 34;
+  --sunken: 18 27 24;
+  --rule: 52 64 59;
+  --rule-strong: 118 128 121;
+  --ink: 238 237 228;
+  --ink-2: 190 196 186;
+  --ink-3: 156 165 153;
+  --action: 238 237 228;
+  --on-action: 23 34 30;
+  --hot: 244 214 94;
+  --hot-ink: 244 214 94;
+  --hot-soft: 60 64 40;
+  --focus: 244 214 94;
+  --enc-current: 244 214 94;
+  --enc-heap: 244 214 94;
+  --enc-done: 150 160 150;
+  --enc-path: 255 255 255;
+  --enc-wall: 10 16 13;
+  --enc-wall-edge: 122 132 124;
+  --enc-cost: 190 168 118;
+  --enc-a: 243 166 195;
+  --enc-b: 143 200 255;
+  --grid-line: 37 50 44;
+  --shadow-pop: 0 1px 0 rgb(0 0 0 / 0.25), 0 12px 32px -10px rgb(0 0 0 / 0.55);
+}
+
+:root {
+  --font-sans: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+  --font-mono: "Atkinson Hyperlegible Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-inout: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --dur-fast: 140ms;
+  --dur-med: 180ms;
+  --dur-slow: 240ms;
+  --travel: 1;
 }
 
 [data-motion="reduce"] {
   --dur-fast: 0ms;
   --dur-med: 0ms;
   --dur-slow: 0ms;
+  --travel: 0;
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    accent-color: rgb(var(--ink));
+    scrollbar-color: rgb(var(--rule-strong) / 0.7) transparent;
   }
   body {
     margin: 0;
     min-height: 100dvh;
     background: rgb(var(--bg));
     color: rgb(var(--ink));
-    font-family: "IBM Plex Sans", system-ui, sans-serif;
-    font-size: 14px;
-    line-height: 20px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 22px;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    caret-color: rgb(var(--hot));
   }
   * {
     border-color: rgb(var(--rule));
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  a {
+    text-underline-offset: 3px;
   }
   :focus-visible {
     outline: 2px solid rgb(var(--focus));
     outline-offset: 2px;
   }
   ::selection {
-    background: rgb(var(--signal) / 0.22);
+    background: rgb(var(--hot) / 0.3);
+    color: rgb(var(--ink));
   }
   button,
   [role="button"],
@@ -115,21 +146,20 @@
 
 @layer components {
   .label {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
-    font-size: 11px;
-    line-height: 14px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 700;
     color: rgb(var(--ink-2));
   }
   .readout {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
   }
   .hatch {
     background-image: repeating-linear-gradient(
       135deg,
-      rgb(var(--ink) / 0.14) 0 1px,
+      rgb(var(--ink) / 0.18) 0 1px,
       transparent 1px 5px
     );
   }
@@ -139,12 +169,6 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-  .tick-rule {
-    background-image: linear-gradient(to right, rgb(var(--rule-strong)) 1px, transparent 1px);
-    background-size: 8px 4px;
-    background-repeat: repeat-x;
-    background-position: bottom;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -152,6 +176,7 @@
     --dur-fast: 0ms;
     --dur-med: 0ms;
     --dur-slow: 0ms;
+    --travel: 0;
   }
   :root:not([data-motion="full"]) *,
   :root:not([data-motion="full"]) *::before,

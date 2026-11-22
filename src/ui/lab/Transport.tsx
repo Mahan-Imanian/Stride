@@ -54,7 +54,7 @@ function classify(k: string): Klass {
 }
 
 function tapeColor(p: Palette, k: Klass): string {
-  return [p.ink3, p.open, p.closed, p.path, p.signal][k];
+  return [p.ink3, p.open, p.closed, p.path, p.current][k];
 }
 
 function drawTape(
@@ -193,8 +193,8 @@ function Scrubber({ large }: { large?: boolean }) {
             className={cn(
               "absolute top-0 w-px",
               m.kind === "bookmark" ? "h-3 bg-focus" : "h-2.5",
-              m.kind === "a" && "bg-signal",
-              m.kind === "b" && "bg-st-b",
+              m.kind === "a" && "bg-action",
+              m.kind === "b" && "bg-enc-b",
             )}
             style={{ left: `${(m.at / Math.max(1, total)) * 100}%` }}
           />
@@ -364,7 +364,7 @@ export function Transport({ compact, present }: { compact?: boolean; present?: b
         <StepBack />
       </IconButton>
       <Button
-        variant="signal"
+        variant="primary"
         size={big ? "lg" : "md"}
         onClick={() => (atEnd && !playing ? restart() : toggle())}
         className={cn("mx-1 w-[104px]")}

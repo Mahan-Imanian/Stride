@@ -18,9 +18,9 @@ export function Toaster({ offset }: { offset: number }) {
           className="pointer-events-auto flex max-w-[min(440px,100%)] animate-rise-in items-center gap-3 rounded-md border border-rule-strong bg-surface py-2 pl-3 pr-1.5 text-sm text-ink shadow-pop"
         >
           {t.tone === "success" ? (
-            <Check className="shrink-0 text-st-path" />
+            <Check className="shrink-0 text-enc-path" />
           ) : t.tone === "error" ? (
-            <Warn className="shrink-0 text-signal-ink" />
+            <Warn className="shrink-0 text-hot-ink" />
           ) : null}
           <span className="min-w-0 flex-1">{t.message}</span>
           {t.action && (

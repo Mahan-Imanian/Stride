@@ -144,11 +144,11 @@ export function GraphView({
           const st = showState ? s.edgeState[i] : 0;
           const cur = showState && s.current === i;
           const stroke = cur
-            ? "rgb(var(--signal))"
+            ? "rgb(var(--enc-current))"
             : st === EDGE_TREE
-              ? "rgb(var(--st-path))"
+              ? "rgb(var(--enc-path))"
               : st === EDGE_CANDIDATE
-                ? "rgb(var(--st-open))"
+                ? "rgb(var(--enc-heap))"
                 : st === EDGE_REJECTED
                   ? "rgb(var(--ink) / 0.18)"
                   : "rgb(var(--ink) / 0.3)";
@@ -201,7 +201,7 @@ export function GraphView({
                     dominantBaseline="central"
                     className={
                       cur
-                        ? "fill-signal-ink font-mono text-[10px] font-medium"
+                        ? "fill-hot-ink font-mono text-[10px] font-medium"
                         : "fill-ink-2 font-mono text-[10px]"
                     }
                   >
@@ -249,7 +249,7 @@ export function GraphView({
               <circle
                 r={r}
                 fill={inTree ? "rgb(var(--ink))" : "rgb(var(--field))"}
-                stroke={tool === "delete" ? "rgb(var(--signal))" : "rgb(var(--ink))"}
+                stroke={tool === "delete" ? "rgb(var(--enc-current))" : "rgb(var(--ink))"}
                 strokeWidth={isRoot ? 3 : 1.5}
                 style={{ transition: "fill var(--dur-med)" }}
               />

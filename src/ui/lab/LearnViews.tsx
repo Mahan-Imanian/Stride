@@ -33,7 +33,7 @@ function axes(
   ctx.lineWidth = 1;
   ctx.strokeRect(x0 + 0.5, y0 + 0.5, w, h);
   ctx.fillStyle = p.ink3;
-  ctx.font = '10px "IBM Plex Mono", monospace';
+  ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
   for (let i = 0; i <= 4; i++) {
@@ -187,8 +187,8 @@ export function KMeansView({
         ctx.lineTo(x - 4.5, y + 4.5);
         ctx.stroke();
         if (snap.empty.includes(i)) {
-          ctx.fillStyle = p.signal;
-          ctx.font = '10px "IBM Plex Mono", monospace';
+          ctx.fillStyle = p.current;
+          ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
           ctx.textAlign = "left";
           ctx.fillText("empty", x + 12, y);
         }
@@ -345,7 +345,7 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       ctx.beginPath();
       ctx.rect(x0, y0, side, side);
       ctx.clip();
-      ctx.strokeStyle = p.rgb("signal", 0.45);
+      ctx.strokeStyle = p.rgb("enc-current", 0.45);
       ctx.lineWidth = 1;
       for (const q of pts) {
         ctx.beginPath();
@@ -360,7 +360,7 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       ctx.lineTo(X(1), Y(opt.m + opt.b));
       ctx.stroke();
       ctx.setLineDash([]);
-      ctx.strokeStyle = snap.phase === "diverged" ? p.signal : p.ink;
+      ctx.strokeStyle = snap.phase === "diverged" ? p.current : p.ink;
       ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.moveTo(X(0), Y(snap.b));
@@ -375,7 +375,7 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       }
       axes(ctx, p, x0, y0, side, side, [0, 1], [0, 1], "x", "y");
       ctx.fillStyle = p.ink2;
-      ctx.font = '11px "IBM Plex Mono", monospace';
+      ctx.font = '11px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
       ctx.textAlign = "left";
       ctx.textBaseline = "top";
       ctx.fillText("data · ŷ = m·x + b", x0 + 6, y0 + 6);
@@ -402,19 +402,19 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       ctx.clip();
       ctx.strokeStyle = p.ink;
       ctx.lineWidth = 1.5;
-      ctx.font = '12px "IBM Plex Mono", monospace';
+      ctx.font = '12px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
       ctx.fillStyle = p.path;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText("×", MX(opt.m), BY(opt.b));
-      ctx.strokeStyle = p.signal;
+      ctx.strokeStyle = p.current;
       ctx.lineWidth = 1.75;
       ctx.beginPath();
       snap.path.forEach((q, i) =>
         i ? ctx.lineTo(MX(q.m), BY(q.b)) : ctx.moveTo(MX(q.m), BY(q.b)),
       );
       ctx.stroke();
-      ctx.fillStyle = p.signal;
+      ctx.fillStyle = p.current;
       for (const q of snap.path) {
         ctx.beginPath();
         ctx.arc(MX(q.m), BY(q.b), 1.8, 0, Math.PI * 2);
@@ -423,7 +423,7 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       const last = snap.path[snap.path.length - 1];
       if (last) {
         ctx.fillStyle = p.field;
-        ctx.strokeStyle = p.signal;
+        ctx.strokeStyle = p.current;
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(MX(last.m), BY(last.b), 5, 0, Math.PI * 2);
@@ -455,7 +455,7 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       ctx.restore();
       axes(ctx, p, x0, y0, w, h, M_RANGE, B_RANGE, "m", "b");
       ctx.fillStyle = p.ink2;
-      ctx.font = '11px "IBM Plex Mono", monospace';
+      ctx.font = '11px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
       ctx.textAlign = "left";
       ctx.textBaseline = "top";
       ctx.fillText("loss surface · MSE(m, b)", x0 + 6, y0 + 6);
@@ -471,7 +471,7 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       const lo = Math.min(...lg);
       const hi = Math.max(...lg);
       ctx.fillStyle = p.ink3;
-      ctx.font = '10px "IBM Plex Mono", monospace';
+      ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
       ctx.textAlign = "right";
       ctx.textBaseline = "middle";
       ctx.fillText("loss", x0 - 6, y0 + h / 2);
@@ -491,7 +491,7 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       });
       ctx.stroke();
       const doneSteps = snap.path.length;
-      ctx.strokeStyle = p.signal;
+      ctx.strokeStyle = p.current;
       ctx.lineWidth = 2;
       ctx.beginPath();
       lg.slice(0, doneSteps).forEach((v, i) => {

@@ -11,7 +11,7 @@ export interface Palette {
   ink: string;
   ink2: string;
   ink3: string;
-  signal: string;
+  current: string;
   focus: string;
   open: string;
   closed: string;
@@ -35,7 +35,7 @@ function readPalette(): Palette {
     }
     return v;
   };
-  for (const n of ["ink", "signal", "st-a", "st-b", "field"]) channels(n);
+  for (const n of ["ink", "enc-current", "enc-a", "enc-b", "field"]) channels(n);
   const rgb = (name: string, alpha = 1) => `rgb(${channels(name)} / ${alpha})`;
   return {
     bg: rgb("bg"),
@@ -47,15 +47,15 @@ function readPalette(): Palette {
     ink: rgb("ink"),
     ink2: rgb("ink-2"),
     ink3: rgb("ink-3"),
-    signal: rgb("signal"),
+    current: rgb("enc-current"),
     focus: rgb("focus"),
-    open: rgb("st-open"),
-    closed: rgb("st-closed"),
-    path: rgb("st-path"),
-    wall: rgb("st-wall"),
-    weight: rgb("st-weight"),
-    a: rgb("st-a"),
-    b: rgb("st-b"),
+    open: rgb("enc-heap"),
+    closed: rgb("enc-done"),
+    path: rgb("enc-path"),
+    wall: rgb("enc-wall"),
+    weight: rgb("enc-cost"),
+    a: rgb("enc-a"),
+    b: rgb("enc-b"),
     gridLine: rgb("grid-line"),
     rgb,
   };

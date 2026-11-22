@@ -10,12 +10,11 @@ import { cn } from "@/lib/utils";
 import { Close } from "./icons";
 
 const buttonStyles = cva(
-  "inline-flex shrink-0 select-none items-center justify-center gap-1.5 whitespace-nowrap rounded font-medium transition-[background-color,color,border-color,transform] duration-fast ease-out active:translate-y-px disabled:pointer-events-none disabled:opacity-40",
+  "inline-flex shrink-0 select-none items-center justify-center gap-1.5 whitespace-nowrap rounded font-medium transition-[background-color,color,border-color,transform] duration-fast ease-out active:scale-[.97] disabled:pointer-events-none disabled:opacity-40",
   {
     variants: {
       variant: {
-        primary: "bg-ink text-surface hover:bg-ink/85",
-        signal: "bg-signal text-signal-on hover:bg-signal/90",
+        primary: "bg-action text-action-on hover:bg-action/90",
         outline: "border border-rule-strong bg-surface text-ink hover:bg-sunken",
         ghost: "text-ink-2 hover:bg-sunken hover:text-ink",
         quiet: "text-ink-2 hover:text-ink",
@@ -319,7 +318,7 @@ export function MenuRadioItem({
 }) {
   return (
     <Menu.RadioItem value={value} className={cn(itemClass, "items-start pl-7")}>
-      <Menu.ItemIndicator className="absolute left-2 top-2.5 h-1.5 w-1.5 rounded-full bg-signal" />
+      <Menu.ItemIndicator className="absolute left-2 top-2.5 h-1.5 w-1.5 rounded-full bg-action" />
       <span className="flex flex-col">
         <span>{children}</span>
         {hint && <span className="text-xs text-ink-3">{hint}</span>}

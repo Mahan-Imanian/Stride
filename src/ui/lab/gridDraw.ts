@@ -102,7 +102,7 @@ export function paintTerrain(
     ctx.fillStyle = p.ink3;
     ctx.strokeStyle = p.ruleStrong;
     ctx.lineWidth = 1;
-    ctx.font = '500 9px "IBM Plex Mono", monospace';
+    ctx.font = '500 9px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
     const every = s >= 14 ? 5 : 10;
     ctx.textAlign = "center";
     ctx.textBaseline = "bottom";
@@ -150,7 +150,7 @@ export function paintTerrain(
     ctx.restore();
     if (s >= 16) {
       ctx.fillStyle = p.ink2;
-      ctx.font = `500 ${Math.min(12, Math.floor(s * 0.45))}px "IBM Plex Mono", monospace`;
+      ctx.font = `500 ${Math.min(12, Math.floor(s * 0.45))}px "Atkinson Hyperlegible Mono", ui-monospace, monospace`;
       ctx.textAlign = "right";
       ctx.textBaseline = "bottom";
       ctx.fillText(String(v), x + s - 2, y + s - 1);
@@ -232,7 +232,7 @@ function paintCells({ ctx, v, snap, a, p, s, ox, oy, w, h, gap, inner, now }: Fr
     if (snap.diffStatus) {
       const ca = st === CLOSED;
       const cb = snap.diffStatus[i] === CLOSED;
-      fill = ca && cb ? p.closed : ca ? p.rgb("st-a", 0.45) : cb ? p.rgb("st-b", 0.4) : null;
+      fill = ca && cb ? p.closed : ca ? p.rgb("enc-a", 0.45) : cb ? p.rgb("enc-b", 0.4) : null;
     } else fill = colorOf(st);
     const t0 = a.at[i];
     const age = t0 && !v.reduced ? (now - t0) / a.dur : 1;
@@ -270,7 +270,7 @@ function paintCells({ ctx, v, snap, a, p, s, ox, oy, w, h, gap, inner, now }: Fr
       }
       if (st === CLOSED && inner >= 6) {
         ctx.globalAlpha = 1 - k;
-        ctx.strokeStyle = p.signal;
+        ctx.strokeStyle = p.current;
         ctx.lineWidth = Math.max(1, Math.min(2, s * 0.12));
         ctx.strokeRect(x + 0.5, y + 0.5, inner - 1, inner - 1);
       }
@@ -282,7 +282,7 @@ function paintCells({ ctx, v, snap, a, p, s, ox, oy, w, h, gap, inner, now }: Fr
 
 function paintValues({ ctx, v, snap, p, s, ox, oy, w, h }: Frame) {
   const fs = Math.max(9, Math.min(12, Math.floor(s * 0.32)));
-  ctx.font = `500 ${fs}px "IBM Plex Mono", monospace`;
+  ctx.font = `500 ${fs}px "Atkinson Hyperlegible Mono", ui-monospace, monospace`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   const fMap = new Map<number, number>();
@@ -305,7 +305,7 @@ function paintValues({ ctx, v, snap, p, s, ox, oy, w, h }: Frame) {
 }
 
 function paintEnqueued({ ctx, v, snap, a, p, s, now, center }: Frame) {
-  ctx.strokeStyle = p.rgb("signal", 0.85);
+  ctx.strokeStyle = p.rgb("enc-current", 0.85);
   ctx.lineWidth = Math.max(1, s * 0.09);
   ctx.lineCap = "round";
   const [cx, cy] = center(snap.current);
@@ -368,7 +368,7 @@ function paintPaths({ ctx, snap, a, p, s, now, center }: Frame): boolean {
     }
     ctx.stroke();
     if (progress < 1) {
-      ctx.fillStyle = p.signal;
+      ctx.fillStyle = p.current;
       ctx.beginPath();
       ctx.arc(head[0], head[1], Math.max(2.5, s * 0.22), 0, Math.PI * 2);
       ctx.fill();
@@ -392,10 +392,10 @@ function paintPaths({ ctx, snap, a, p, s, now, center }: Frame): boolean {
 function paintCurrent({ ctx, snap, p, s, inner, center }: Frame) {
   if (snap.current >= 0 && !snap.path.includes(snap.current)) {
     const [cx, cy] = center(snap.current);
-    ctx.fillStyle = p.signal;
+    ctx.fillStyle = p.current;
     ctx.fillRect(cx - inner / 2, cy - inner / 2, inner, inner);
     if (s >= 8) {
-      ctx.strokeStyle = p.signal;
+      ctx.strokeStyle = p.current;
       ctx.lineWidth = 1.5;
       ctx.strokeRect(cx - s / 2 - 1.5, cy - s / 2 - 1.5, s + 3, s + 3);
     }

@@ -16,7 +16,7 @@ function Readout({
 }: {
   label: string;
   value: ReactNode;
-  tone?: "signal" | "path";
+  tone?: "current" | "path";
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-0.5">
@@ -24,7 +24,7 @@ function Readout({
       <dd
         className={cn(
           "readout truncate text-md",
-          tone === "signal" ? "text-signal-ink" : tone === "path" ? "text-st-path" : "text-ink",
+          tone === "current" ? "text-hot-ink" : tone === "path" ? "text-enc-path" : "text-ink",
         )}
       >
         {value}
@@ -33,7 +33,7 @@ function Readout({
   );
 }
 
-function Readouts({ items }: { items: [string, ReactNode, ("signal" | "path")?][] }) {
+function Readouts({ items }: { items: [string, ReactNode, ("current" | "path")?][] }) {
   return (
     <dl className="grid grid-cols-3 gap-x-3 gap-y-3">
       {items.map(([l, v, t]) => (
@@ -107,7 +107,7 @@ function GridState({ run, cursor }: { run: Extract<Run, { family: "grid" }>; cur
       <Block title="Now">
         <Readouts
           items={[
-            ["Current", s.current >= 0 ? fmtCell(s.current, w) : "—", "signal"],
+            ["Current", s.current >= 0 ? fmtCell(s.current, w) : "—", "current"],
             [
               run.algo === "bfs" || run.algo === "dfs" ? "Moves" : "g",
               s.current >= 0 ? Math.round(s.g[s.current] * 100) / 100 : "—",
@@ -153,7 +153,7 @@ function GridState({ run, cursor }: { run: Extract<Run, { family: "grid" }>; cur
                   "readout absolute inset-x-0 top-0 grid h-[22px] cursor-default grid-cols-[24px_minmax(0,1fr)_56px_48px_56px] items-center text-sm transition-transform duration-med ease-out",
                   i === 0 && "bg-sunken",
                   stale && "text-ink-3 line-through",
-                  fresh && "animate-entry-in text-signal-ink",
+                  fresh && "animate-entry-in text-hot-ink",
                 )}
                 style={{ transform: `translateY(${i * ROW_H}px)` }}
                 onMouseEnter={() => setFocus(e.cell)}
@@ -210,13 +210,13 @@ function SortState({ run, cursor }: { run: Extract<Run, { family: "sort" }>; cur
       <Block title="Now">
         {cmp ? (
           <p className="readout text-lg">
-            <span className="text-st-open">{cmp.buf ? bv(cmp.i) : v(cmp.i)}</span>
+            <span className="text-enc-heap">{cmp.buf ? bv(cmp.i) : v(cmp.i)}</span>
             <span className="px-2 text-ink-3">vs</span>
-            <span className="text-st-open">{cmp.buf ? bv(cmp.j) : v(cmp.j)}</span>
+            <span className="text-enc-heap">{cmp.buf ? bv(cmp.j) : v(cmp.j)}</span>
             <span className="ml-3 text-sm text-ink-2">{cmp.res ? "→ act" : "→ keep"}</span>
           </p>
         ) : s.swap ? (
-          <p className="readout text-lg text-signal-ink">
+          <p className="readout text-lg text-hot-ink">
             swap {v(s.swap[0])} ↔ {v(s.swap[1])}
           </p>
         ) : (
@@ -294,9 +294,9 @@ function SearchState({ run, cursor }: { run: Extract<Run, { family: "search" }>;
       <Block title="Now">
         {s.probe >= 0 ? (
           <p className="readout text-lg">
-            a[{s.probe}] = <span className="text-st-open">{s.values[s.probe]}</span>
+            a[{s.probe}] = <span className="text-enc-heap">{s.values[s.probe]}</span>
             <span className="px-2 text-ink-3">{s.cmp}</span>
-            <span className="text-signal-ink">{s.target}</span>
+            <span className="text-hot-ink">{s.target}</span>
           </p>
         ) : (
           <p className="text-sm text-ink-3">Looking for {s.target}.</p>
@@ -340,7 +340,7 @@ function GraphState({ run, cursor }: { run: Extract<Run, { family: "graph" }>; c
       <Block title="Now">
         <Readouts
           items={[
-            ["Edge", s.current >= 0 ? lbl(s.current) : "—", "signal"],
+            ["Edge", s.current >= 0 ? lbl(s.current) : "—", "current"],
             ["Weight", s.current >= 0 ? edges[s.current][2] : "—"],
             ["Tree total", s.total, "path"],
           ]}
@@ -386,7 +386,7 @@ function GraphState({ run, cursor }: { run: Extract<Run, { family: "graph" }>; c
                     "flex justify-between px-1 py-0.5",
                     s.current === e && "bg-sunken text-ink",
                     status === "cycle" && "text-ink-3 line-through",
-                    status === "in tree" && "text-st-path",
+                    status === "in tree" && "text-enc-path",
                   )}
                 >
                   <span>
@@ -437,7 +437,7 @@ function Spark({ values, highlight }: { values: number[]; highlight?: number }) 
           cx={(highlight / (values.length - 1)) * 100}
           cy={28 - ((values[highlight] - lo) / Math.max(1e-9, hi - lo)) * 26}
           r="2"
-          fill="rgb(var(--signal))"
+          fill="rgb(var(--enc-current))"
         />
       )}
     </svg>
@@ -454,7 +454,7 @@ function KMeansState({ run, cursor }: { run: Extract<Run, { family: "kmeans" }>;
       <Block title="Now">
         <Readouts
           items={[
-            ["Phase", s.phase, "signal"],
+            ["Phase", s.phase, "current"],
             ["Iteration", s.iteration],
             ["Switched", s.assign ? s.changed : "—"],
           ]}
@@ -480,10 +480,7 @@ function KMeansState({ run, cursor }: { run: Extract<Run, { family: "kmeans" }>;
                   {i + 1}
                 </td>
                 <td
-                  className={cn(
-                    "py-0.5 text-right",
-                    s.assign && counts[i] === 0 && "text-signal-ink",
-                  )}
+                  className={cn("py-0.5 text-right", s.assign && counts[i] === 0 && "text-hot-ink")}
                 >
                   {s.assign ? counts[i] : "—"}
                 </td>
@@ -529,7 +526,7 @@ function GradientState({
             [
               "Loss",
               s.phase === "diverged" ? "∞" : f(s.loss),
-              s.phase === "diverged" ? "signal" : undefined,
+              s.phase === "diverged" ? "current" : undefined,
             ],
           ]}
         />

@@ -172,19 +172,19 @@ function OverlayLegend() {
   return (
     <div className="flex h-7 shrink-0 items-center gap-x-4 overflow-hidden whitespace-nowrap border-t border-rule bg-surface px-3 text-xs text-ink-2">
       <span className="flex items-center gap-1.5">
-        <span className="h-2.5 w-2.5 bg-st-a/50" /> only A
+        <span className="h-2.5 w-2.5 bg-enc-a/50" /> only A
       </span>
       <span className="flex items-center gap-1.5">
-        <span className="h-2.5 w-2.5 bg-st-b/45" /> only B
+        <span className="h-2.5 w-2.5 bg-enc-b/45" /> only B
       </span>
       <span className="flex items-center gap-1.5">
-        <span className="h-2.5 w-2.5 bg-st-closed" /> both
+        <span className="h-2.5 w-2.5 bg-enc-done" /> both
       </span>
       <span className="flex items-center gap-1.5">
-        <span className="h-0.5 w-4 bg-st-a" /> A path
+        <span className="h-0.5 w-4 bg-enc-a" /> A path
       </span>
       <span className="flex items-center gap-1.5">
-        <span className="h-0.5 w-4 border-t-2 border-dashed border-st-b" /> B path
+        <span className="h-0.5 w-4 border-t-2 border-dashed border-enc-b" /> B path
       </span>
     </div>
   );
@@ -195,33 +195,33 @@ export function Legend() {
   const items: [string, string][] =
     exp.family === "grid"
       ? [
-          ["bg-st-open", "frontier"],
-          ["bg-st-closed", "expanded"],
-          ["bg-signal", "current"],
-          ["bg-st-path", "path"],
-          ["bg-st-wall", "wall"],
-          ["bg-st-weight hatch", "mud"],
+          ["bg-enc-heap", "frontier"],
+          ["bg-enc-done", "expanded"],
+          ["bg-action", "current"],
+          ["bg-enc-path", "path"],
+          ["bg-enc-wall", "wall"],
+          ["bg-enc-cost hatch", "mud"],
         ]
       : exp.family === "sort"
         ? [
-            ["bg-st-open", "compared"],
-            ["bg-signal", "moved"],
+            ["bg-enc-heap", "compared"],
+            ["bg-action", "moved"],
             ["bg-ink", "pivot"],
-            ["bg-st-path", "sorted"],
+            ["bg-enc-path", "sorted"],
             ["bg-sunken", "active range"],
           ]
         : exp.family === "search"
           ? [
               ["bg-sunken", "candidate range"],
-              ["bg-st-open", "probe"],
-              ["bg-st-path", "found"],
-              ["bg-signal", "target value"],
+              ["bg-enc-heap", "probe"],
+              ["bg-enc-path", "found"],
+              ["bg-action", "target value"],
             ]
           : exp.family === "graph"
             ? [
-                ["bg-st-open", "candidate"],
-                ["bg-signal", "under test"],
-                ["bg-st-path", "tree edge"],
+                ["bg-enc-heap", "candidate"],
+                ["bg-action", "under test"],
+                ["bg-enc-path", "tree edge"],
                 ["bg-ink", "tree node"],
               ]
             : exp.model === "kmeans"
@@ -231,8 +231,8 @@ export function Legend() {
                 ]
               : [
                   ["bg-ink", "current fit"],
-                  ["bg-signal", "residuals, descent path"],
-                  ["bg-st-path", "best fit"],
+                  ["bg-action", "residuals, descent path"],
+                  ["bg-enc-path", "best fit"],
                 ];
   return (
     <ul
@@ -409,7 +409,7 @@ function Line({
           )}
           title={e.now}
         >
-          <span className="mr-2 text-signal-ink">{tag ? "" : `${algo} ·`}</span>
+          <span className="mr-2 text-hot-ink">{tag ? "" : `${algo} ·`}</span>
           {e.now}
         </p>
         <p

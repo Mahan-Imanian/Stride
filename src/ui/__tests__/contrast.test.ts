@@ -27,8 +27,18 @@ const ratio = (a: number[], b: number[]) => {
 };
 
 const THEMES = { light: '[data-theme="light"]', dark: '[data-theme="dark"]' };
-const TEXT = ["ink", "ink-2", "ink-3", "signal-ink"];
+const TEXT = ["ink", "ink-2", "ink-3", "hot-ink"];
 const SURFACES = ["bg", "surface", "field", "sunken"];
+const MARKS = [
+  "enc-current",
+  "enc-heap",
+  "enc-done",
+  "enc-path",
+  "enc-wall-edge",
+  "enc-cost",
+  "enc-a",
+  "enc-b",
+];
 const TEXT_MIN = 4.5;
 const NON_TEXT_MIN = 3;
 
@@ -42,13 +52,25 @@ describe("colour tokens meet WCAG 2.x contrast", () => {
           expect(ratio(t[fg], t[bg]), `${fg} on ${bg}`).toBeGreaterThanOrEqual(TEXT_MIN);
     });
 
-    it(`${theme}: text on the signal colour is at least ${TEXT_MIN}:1`, () => {
-      expect(ratio(t["on-signal"], t.signal)).toBeGreaterThanOrEqual(TEXT_MIN);
+    it(`${theme}: text on the action colour is at least ${TEXT_MIN}:1`, () => {
+      expect(ratio(t["on-action"], t.action)).toBeGreaterThanOrEqual(TEXT_MIN);
     });
 
     it(`${theme}: the focus ring is at least ${NON_TEXT_MIN}:1 against every surface`, () => {
       for (const bg of SURFACES)
         expect(ratio(t.focus, t[bg]), `focus on ${bg}`).toBeGreaterThanOrEqual(NON_TEXT_MIN);
+    });
+
+    it(`${theme}: every canvas mark is at least ${NON_TEXT_MIN}:1 against an open cell`, () => {
+      for (const mark of MARKS)
+        expect(ratio(t[mark], t.field), `${mark} on field`).toBeGreaterThanOrEqual(NON_TEXT_MIN);
+    });
+
+    it(`${theme}: the wall contour separates a wall from an open cell`, () => {
+      expect(
+        ratio(t["enc-wall-edge"], t["enc-wall"]) >= NON_TEXT_MIN ||
+          ratio(t["enc-wall"], t.field) >= NON_TEXT_MIN,
+      ).toBe(true);
     });
   }
 });

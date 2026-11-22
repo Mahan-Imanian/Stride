@@ -76,9 +76,9 @@ function drawThumb(
             ? a && b
               ? p.closed
               : a
-                ? p.rgb("st-a", 0.45)
+                ? p.rgb("enc-a", 0.45)
                 : b
-                  ? p.rgb("st-b", 0.4)
+                  ? p.rgb("enc-b", 0.4)
                   : g.cells[i] > 1
                     ? p.weight
                     : p.field
@@ -173,7 +173,7 @@ function drawThumb(
     ctx.beginPath();
     ctx.rect(ox, oy, side, side);
     ctx.clip();
-    ctx.strokeStyle = st.phase === "diverged" ? p.signal : p.ink;
+    ctx.strokeStyle = st.phase === "diverged" ? p.current : p.ink;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(ox, oy + (1 - st.b) * side);
