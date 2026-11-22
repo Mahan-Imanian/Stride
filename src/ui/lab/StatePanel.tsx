@@ -7,7 +7,7 @@ import { EDGE_TREE, findRoot } from "@/core/graph/graph";
 import { bestFit } from "@/core/learn/gradient";
 import { cn } from "@/lib/utils";
 import { useLab } from "@/store/lab";
-import { CLUSTER_COLORS } from "./colors";
+import { ClusterMark } from "./Swatch";
 
 function Readout({
   label,
@@ -473,10 +473,9 @@ function KMeansState({ run, cursor }: { run: Extract<Run, { family: "kmeans" }>;
             {s.centroids.map((c, i) => (
               <tr key={i}>
                 <td className="py-0.5">
-                  <span
-                    className="mr-2 inline-block h-2.5 w-2.5 align-middle"
-                    style={{ background: CLUSTER_COLORS[i % CLUSTER_COLORS.length] }}
-                  />
+                  <span className="mr-2 inline-flex align-middle">
+                    <ClusterMark index={i} />
+                  </span>
                   {i + 1}
                 </td>
                 <td

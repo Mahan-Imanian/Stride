@@ -1,3 +1,4 @@
+import { Swatch, type SwatchKind } from "./Swatch";
 import { useMemo } from "react";
 import { metricsAt, variantLabel, type Run } from "@/core/experiment";
 import { getAlgo } from "@/core/info";
@@ -169,79 +170,83 @@ function PaneHeader({
 }
 
 function OverlayLegend() {
+  const items: [SwatchKind, string][] = [
+    ["run-a", "only A"],
+    ["run-b", "only B"],
+    ["both", "both"],
+    ["path-a", "A path"],
+    ["path-b", "B path"],
+  ];
   return (
-    <div className="flex h-7 shrink-0 items-center gap-x-4 overflow-hidden whitespace-nowrap border-t border-rule bg-surface px-3 text-xs text-ink-2">
-      <span className="flex items-center gap-1.5">
-        <span className="h-2.5 w-2.5 bg-enc-a/50" /> only A
-      </span>
-      <span className="flex items-center gap-1.5">
-        <span className="h-2.5 w-2.5 bg-enc-b/45" /> only B
-      </span>
-      <span className="flex items-center gap-1.5">
-        <span className="h-2.5 w-2.5 bg-enc-done" /> both
-      </span>
-      <span className="flex items-center gap-1.5">
-        <span className="h-0.5 w-4 bg-enc-a" /> A path
-      </span>
-      <span className="flex items-center gap-1.5">
-        <span className="h-0.5 w-4 border-t-2 border-dashed border-enc-b" /> B path
-      </span>
-    </div>
+    <ul
+      className="flex h-7 shrink-0 items-center gap-x-4 overflow-hidden whitespace-nowrap border-t border-rule bg-surface px-3 text-xs text-ink-2"
+      aria-label="Comparison legend"
+    >
+      {items.map(([k, l]) => (
+        <li key={l} className="flex items-center gap-1.5">
+          <Swatch kind={k} />
+          {l}
+        </li>
+      ))}
+    </ul>
   );
 }
 
 export function Legend() {
   const exp = useLab((s) => s.exp);
-  const items: [string, string][] =
+  const items: [SwatchKind, string][] =
     exp.family === "grid"
       ? [
-          ["bg-enc-heap", "frontier"],
-          ["bg-enc-done", "expanded"],
-          ["bg-action", "current"],
-          ["bg-enc-path", "path"],
-          ["bg-enc-wall", "wall"],
-          ["bg-enc-cost hatch", "mud"],
+          ["pending", "frontier"],
+          ["done", "expanded"],
+          ["current", "current"],
+          ["trail", "just expanded"],
+          ["path", "path"],
+          ["wall", "wall"],
+          ["cost", "mud"],
         ]
       : exp.family === "sort"
         ? [
-            ["bg-enc-heap", "compared"],
-            ["bg-action", "moved"],
-            ["bg-ink", "pivot"],
-            ["bg-enc-path", "sorted"],
-            ["bg-sunken", "active range"],
+            ["pending", "compared"],
+            ["current", "moved"],
+            ["pivot", "pivot"],
+            ["done", "sorted"],
+            ["range", "active range"],
           ]
         : exp.family === "search"
           ? [
-              ["bg-sunken", "candidate range"],
-              ["bg-enc-heap", "probe"],
-              ["bg-enc-path", "found"],
-              ["bg-action", "target value"],
+              ["range", "candidate range"],
+              ["current", "probe"],
+              ["found", "found"],
+              ["reference", "target value"],
             ]
           : exp.family === "graph"
             ? [
-                ["bg-enc-heap", "candidate"],
-                ["bg-action", "under test"],
-                ["bg-enc-path", "tree edge"],
-                ["bg-ink", "tree node"],
+                ["candidate", "candidate"],
+                ["current-line", "under test"],
+                ["path", "tree edge"],
+                ["rejected", "rejected"],
+                ["tree-node", "tree node"],
               ]
             : exp.model === "kmeans"
               ? [
-                  ["bg-ink-3", "unassigned"],
-                  ["bg-sunken", "region of nearest centroid"],
+                  ["unassigned", "unassigned"],
+                  ["centroid", "centroid"],
+                  ["range", "region of nearest centroid"],
                 ]
               : [
-                  ["bg-ink", "current fit"],
-                  ["bg-action", "residuals, descent path"],
-                  ["bg-enc-path", "best fit"],
+                  ["fit", "current fit"],
+                  ["current-line", "residuals, descent path"],
+                  ["path", "best fit"],
                 ];
   return (
     <ul
       className="flex h-7 items-center gap-x-3 overflow-hidden whitespace-nowrap text-xs text-ink-2"
       aria-label="Legend"
     >
-      {items.map(([c, l]) => (
+      {items.map(([k, l]) => (
         <li key={l} className="flex shrink-0 items-center gap-1.5">
-          <span className={cn("h-2.5 w-2.5 border border-rule-strong", c)} aria-hidden="true" />
+          <Swatch kind={k} />
           {l}
         </li>
       ))}

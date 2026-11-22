@@ -4,7 +4,7 @@ import { B_RANGE, bestFit, lossAt, M_RANGE } from "@/core/learn/gradient";
 import type { Point } from "@/core/learn/kmeans";
 import { useLab } from "@/store/lab";
 import { perf, timed } from "../perf";
-import { CLUSTER_COLORS } from "./colors";
+import { canvasFont, clusterShape, shapePath } from "./canvasKit";
 import { setupCanvas, useElementSize, usePalette, useReducedMotion, type Palette } from "../hooks";
 
 type KRun = Extract<Run, { family: "kmeans" }>;
@@ -33,7 +33,7 @@ function axes(
   ctx.lineWidth = 1;
   ctx.strokeRect(x0 + 0.5, y0 + 0.5, w, h);
   ctx.fillStyle = p.ink3;
-  ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+  ctx.font = canvasFont(12);
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
   for (let i = 0; i <= 4; i++) {
@@ -143,7 +143,7 @@ export function KMeansView({
                 best = i;
               }
             });
-            ctx.fillStyle = CLUSTER_COLORS[best % CLUSTER_COLORS.length] + "1a";
+            ctx.fillStyle = p.rgb(`cat-${(best % 8) + 1}`, 0.1);
             ctx.fillRect(x0 + gx * cs, y0 + gy * cs, cs + 0.5, cs + 0.5);
           }
         }
@@ -151,15 +151,13 @@ export function KMeansView({
       const pts = run.input.points;
       for (let i = 0; i < pts.length; i++) {
         const a = snap.assign ? snap.assign[i] : -1;
-        ctx.fillStyle = a >= 0 ? CLUSTER_COLORS[a % CLUSTER_COLORS.length] : p.ink3;
-        ctx.beginPath();
-        ctx.arc(X(pts[i].x), Y(pts[i].y), 2.6, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = a >= 0 ? p.cat[a % 8] : p.ink3;
+        ctx.fill(shapePath(a >= 0 ? clusterShape(a) : "circle", X(pts[i].x), Y(pts[i].y), 3));
       }
       snap.trails.forEach((t, i) => {
         if (t.length < 2) return;
-        ctx.strokeStyle = CLUSTER_COLORS[i % CLUSTER_COLORS.length];
-        ctx.lineWidth = 1.25;
+        ctx.strokeStyle = p.cat[i % 8];
+        ctx.lineWidth = 1.5;
         ctx.setLineDash([3, 3]);
         ctx.beginPath();
         ctx.moveTo(X(t[0].x), Y(t[0].y));
@@ -172,25 +170,22 @@ export function KMeansView({
       cents.forEach((c, i) => {
         const x = X(c.x);
         const y = Y(c.y);
-        const col = CLUSTER_COLORS[i % CLUSTER_COLORS.length];
-        ctx.fillStyle = p.field;
+        const col = p.cat[i % 8];
+        ctx.fillStyle = p.bg;
         ctx.beginPath();
-        ctx.arc(x, y, 9, 0, Math.PI * 2);
+        ctx.arc(x, y, 12, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = col;
-        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = p.ink;
+        ctx.lineWidth = 2;
         ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x - 4.5, y - 4.5);
-        ctx.lineTo(x + 4.5, y + 4.5);
-        ctx.moveTo(x + 4.5, y - 4.5);
-        ctx.lineTo(x - 4.5, y + 4.5);
-        ctx.stroke();
+        ctx.fillStyle = col;
+        ctx.fill(shapePath(clusterShape(i), x, y, 5.5));
         if (snap.empty.includes(i)) {
-          ctx.fillStyle = p.current;
-          ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+          ctx.fillStyle = p.ink;
+          ctx.font = canvasFont(12, { mono: false, weight: 700 });
           ctx.textAlign = "left";
-          ctx.fillText("empty", x + 12, y);
+          ctx.textBaseline = "middle";
+          ctx.fillText("Empty", x + 16, y);
         }
       });
       if (manual && cursor === 0) {
@@ -375,7 +370,7 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       }
       axes(ctx, p, x0, y0, side, side, [0, 1], [0, 1], "x", "y");
       ctx.fillStyle = p.ink2;
-      ctx.font = '11px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+      ctx.font = canvasFont(12);
       ctx.textAlign = "left";
       ctx.textBaseline = "top";
       ctx.fillText("data · ŷ = m·x + b", x0 + 6, y0 + 6);
@@ -402,7 +397,7 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       ctx.clip();
       ctx.strokeStyle = p.ink;
       ctx.lineWidth = 1.5;
-      ctx.font = '12px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+      ctx.font = canvasFont(13, { weight: 700 });
       ctx.fillStyle = p.path;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -455,7 +450,7 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       ctx.restore();
       axes(ctx, p, x0, y0, w, h, M_RANGE, B_RANGE, "m", "b");
       ctx.fillStyle = p.ink2;
-      ctx.font = '11px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+      ctx.font = canvasFont(12);
       ctx.textAlign = "left";
       ctx.textBaseline = "top";
       ctx.fillText("loss surface · MSE(m, b)", x0 + 6, y0 + 6);
@@ -471,7 +466,7 @@ export function GradientView({ run, cursor, label }: { run: GRun; cursor: number
       const lo = Math.min(...lg);
       const hi = Math.max(...lg);
       ctx.fillStyle = p.ink3;
-      ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+      ctx.font = canvasFont(12);
       ctx.textAlign = "right";
       ctx.textBaseline = "middle";
       ctx.fillText("loss", x0 - 6, y0 + h / 2);

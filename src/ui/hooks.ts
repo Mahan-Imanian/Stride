@@ -17,10 +17,12 @@ export interface Palette {
   closed: string;
   path: string;
   wall: string;
+  wallEdge: string;
   weight: string;
   a: string;
   b: string;
   gridLine: string;
+  cat: string[];
   rgb: (name: string, alpha?: number) => string;
 }
 
@@ -53,10 +55,12 @@ function readPalette(): Palette {
     closed: rgb("enc-done"),
     path: rgb("enc-path"),
     wall: rgb("enc-wall"),
+    wallEdge: rgb("enc-wall-edge"),
     weight: rgb("enc-cost"),
     a: rgb("enc-a"),
     b: rgb("enc-b"),
     gridLine: rgb("grid-line"),
+    cat: [1, 2, 3, 4, 5, 6, 7, 8].map((i) => rgb(`cat-${i}`)),
     rgb,
   };
 }

@@ -6,12 +6,13 @@ import { baseRate, SPEEDS, useLab } from "@/store/lab";
 import { usePresentedCursor } from "../clock";
 import { setupCanvas, useElementSize, usePalette, useReducedMotion, type Palette } from "../hooks";
 import { timed } from "../perf";
+import { canvasFont, hatch } from "./canvasKit";
 
 type SortRun = Extract<Run, { family: "sort" }>;
 type SearchRun = Extract<Run, { family: "search" }>;
 
 const POINTER_ORDER = ["lo", "i", "j", "min", "pivot", "child", "k", "mid", "hi", "end"];
-const PTR_H = 40;
+const PTR_H = 46;
 const BAR_MOTION = { stepFraction: 0.45, minTauS: 0.025, maxTauS: 0.12, pausedRate: 4 };
 
 function cursorOf(which: "a" | "b") {
@@ -31,6 +32,8 @@ interface Target {
   slot: number;
   buffer: boolean;
   color: string;
+  sorted: boolean;
+  outline: boolean;
   dim: boolean;
   emph: boolean;
 }
@@ -39,7 +42,9 @@ function sortTargets(s: SortState, p: Palette, algo: string): Target[] {
   const out: Target[] = s.values.map(() => ({
     slot: 0,
     buffer: false,
-    color: p.rgb("ink", 0.5),
+    color: p.rgb("ink", 0.34),
+    sorted: false,
+    outline: false,
     dim: false,
     emph: false,
   }));
@@ -48,7 +53,10 @@ function sortTargets(s: SortState, p: Palette, algo: string): Target[] {
     if (id < 0) return;
     const t = out[id];
     t.slot = i;
-    if (s.sorted[i]) t.color = p.path;
+    if (s.sorted[i]) {
+      t.color = p.closed;
+      t.sorted = true;
+    }
     if (s.ptr.pivot === i) t.color = p.ink;
     if (top && (i < top.lo || i > top.hi) && !s.sorted[i]) t.dim = true;
     if (algo === "heap" && typeof s.ptr.end === "number" && i >= s.ptr.end && !s.sorted[i])
@@ -59,16 +67,19 @@ function sortTargets(s: SortState, p: Palette, algo: string): Target[] {
     out[id].slot = s.bufferLo + i;
     out[id].buffer = true;
   });
-  const mark = (pos: number, buf: boolean, color: string) => {
+  const mark = (pos: number, buf: boolean, color: string | null) => {
     const id = buf ? s.buffer?.[pos - s.bufferLo] : s.order[pos];
     if (id === undefined || id < 0) return;
-    out[id].color = color;
+    if (color) {
+      out[id].color = color;
+      out[id].sorted = false;
+    } else out[id].outline = true;
     out[id].dim = false;
     out[id].emph = true;
   };
   if (s.compare) {
-    mark(s.compare.i, s.compare.buf, p.open);
-    mark(s.compare.j, s.compare.buf, p.open);
+    mark(s.compare.i, s.compare.buf, null);
+    mark(s.compare.j, s.compare.buf, null);
   }
   if (s.swap) {
     mark(s.swap[0], false, p.current);
@@ -180,8 +191,9 @@ function drawSort(
   const bufH = hasBuffer ? area - bufTop : 0;
   const slot = n ? W / n : 0;
   const bw = Math.max(2, Math.min(slot * 0.74, slot - 1));
-  const showValues = slot >= 20;
+  const showValues = slot >= 24;
   const targets = sortTargets(s, p, algo);
+  const doneHatch = bw >= 7 ? hatch(ctx, p.ink, 1, 5, 1) : null;
   if (pos.x.length !== n) {
     pos.x = new Float64Array(n);
     pos.y = new Float64Array(n);
@@ -190,17 +202,17 @@ function drawSort(
   ctx.clearRect(0, 0, W, H);
   const top = s.stack[s.stack.length - 1];
   if (top && top.hi >= top.lo) {
-    ctx.fillStyle = p.sunken;
+    ctx.fillStyle = p.rgb("ink", 0.07);
     ctx.fillRect(top.lo * slot, 0, (top.hi - top.lo + 1) * slot, mainH);
   }
   if (algo === "heap" && typeof s.ptr.end === "number" && s.ptr.end > 0) {
-    ctx.fillStyle = p.sunken;
+    ctx.fillStyle = p.rgb("ink", 0.07);
     ctx.fillRect(0, 0, s.ptr.end * slot, mainH);
-    ctx.fillStyle = p.ink3;
-    ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+    ctx.fillStyle = p.ink2;
+    ctx.font = canvasFont(12, { mono: false, weight: 700 });
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText("heap", 4, 4);
+    ctx.fillText("Heap", 4, 4);
   }
   if (hasBuffer) {
     ctx.strokeStyle = p.rule;
@@ -208,14 +220,14 @@ function drawSort(
     ctx.moveTo(0, bufTop - 5.5);
     ctx.lineTo(W, bufTop - 5.5);
     ctx.stroke();
-    ctx.fillStyle = p.ink3;
-    ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+    ctx.fillStyle = p.ink2;
+    ctx.font = canvasFont(12, { mono: false, weight: 700 });
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText("buffer", 0, bufTop);
+    ctx.fillText("Merge buffer", 0, bufTop);
   }
   let moving = false;
-  ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+  ctx.font = canvasFont(12);
   ctx.textAlign = "center";
   ctx.textBaseline = "bottom";
   for (let id = 0; id < n; id++) {
@@ -238,11 +250,21 @@ function drawSort(
     const yMix = pos.y[id];
     const areaH = mainH + (bufH - mainH) * yMix;
     const base = mainH + (bufTop + bufH - mainH) * yMix;
-    const bh = Math.max(2, (v / max) * (areaH - (showValues ? 14 : 4)));
+    const bh = Math.max(2, (v / max) * (areaH - (showValues ? 16 : 4)));
     const x = pos.x[id];
     ctx.globalAlpha = t.dim ? 0.32 : 1;
     ctx.fillStyle = t.color;
     ctx.fillRect(x, base - bh, bw, bh);
+    if (t.sorted && doneHatch) {
+      ctx.fillStyle = doneHatch;
+      ctx.fillRect(x, base - bh, bw, bh);
+    }
+    if (t.outline) {
+      const lw = Math.min(2.5, Math.max(1.5, bw * 0.2));
+      ctx.strokeStyle = p.open;
+      ctx.lineWidth = lw;
+      ctx.strokeRect(x - lw / 2, base - bh - lw / 2, bw + lw, bh + lw);
+    }
     if (showValues) {
       ctx.fillStyle = t.emph ? p.ink : p.ink3;
       ctx.fillText(String(v), x + bw / 2, base - bh - 3);
@@ -380,7 +402,7 @@ function drawSearch(
   const area = Math.max(0, H - PTR_H);
   const slot = n ? W / n : 0;
   const bw = Math.max(1.5, Math.min(slot * 0.74, slot - 1));
-  const showValues = slot >= 22;
+  const showValues = slot >= 24;
   const lo = s.done ? (s.found >= 0 ? s.found : 0) : s.lo;
   const hi = s.done ? (s.found >= 0 ? s.found : -1) : s.hi;
   const step = (cur: number, to: number) => (cur < 0 ? to : cur + (to - cur) * k);
@@ -391,19 +413,19 @@ function drawSearch(
     Math.abs(a.lo - lo) > 0.01 || Math.abs(a.hi - hi) > 0.01 || Math.abs(a.probe - s.probe) > 0.01;
   ctx.clearRect(0, 0, W, H);
   if (a.hi >= a.lo - 0.5) {
-    ctx.fillStyle = p.sunken;
+    ctx.fillStyle = p.rgb("ink", 0.07);
     ctx.fillRect(a.lo * slot, 0, Math.max(0, (a.hi - a.lo + 1) * slot), area);
   }
-  ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+  ctx.font = canvasFont(12);
   ctx.textAlign = "center";
   ctx.textBaseline = "bottom";
   for (let i = 0; i < n; i++) {
     const v = s.values[i];
-    const bh = Math.max(2, (v / max) * (area - 16));
+    const bh = Math.max(2, (v / max) * (area - 18));
     const inRange = s.done ? s.found === i : i >= s.lo && i <= s.hi;
     let fill = inRange ? p.rgb("ink", 0.55) : p.rgb("ink", 0.16);
     if (s.probed[i]) fill = inRange ? p.rgb("ink", 0.75) : p.rgb("ink", 0.28);
-    if (s.probe === i) fill = p.open;
+    if (s.probe === i) fill = p.current;
     if (s.found === i) fill = p.path;
     ctx.fillStyle = fill;
     ctx.fillRect(i * slot + (slot - bw) / 2, area - bh, bw, bh);
@@ -412,17 +434,17 @@ function drawSearch(
       ctx.fillText(String(v), i * slot + slot / 2, area - bh - 3);
     }
   }
-  const ty = Math.round(area - (s.target / max) * (area - 16)) + 0.5;
-  ctx.strokeStyle = p.current;
+  const ty = Math.round(area - (s.target / max) * (area - 18)) + 0.5;
+  ctx.strokeStyle = p.ink2;
   ctx.setLineDash([4, 3]);
   ctx.beginPath();
   ctx.moveTo(0, ty);
   ctx.lineTo(W, ty);
   ctx.stroke();
   ctx.setLineDash([]);
-  ctx.fillStyle = p.current;
+  ctx.fillStyle = p.ink;
   ctx.textAlign = "right";
-  ctx.font = '11px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+  ctx.font = canvasFont(12, { weight: 700 });
   ctx.fillText(`target ${s.target}`, W - 2, ty - 4);
   const baseY = H - PTR_H + 6;
   ctx.strokeStyle = p.ruleStrong;
@@ -435,7 +457,7 @@ function drawSearch(
     marks.push(["lo", a.lo, p.ink3], ["hi", a.hi, p.ink3]);
   }
   if (s.probe >= 0 && (!s.done || s.found >= 0)) marks.push(["probe", a.probe, p.current]);
-  ctx.font = '10px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+  ctx.font = canvasFont(12);
   const labels: { x: number; names: string[] }[] = [];
   for (const [name, at, color] of marks) {
     const x = at * slot + slot / 2;
@@ -466,11 +488,11 @@ function drawLabels(
   ctx.textBaseline = "top";
   const rowEnd = [-Infinity, -Infinity];
   for (const l of labels.sort((a, b) => a.x - b.x)) {
-    const text = l.names.join("·");
+    const text = l.names.join(" ");
     const half = ctx.measureText(text).width / 2;
     const x = Math.min(Math.max(l.x, half), W - half);
     const row = x - half >= rowEnd[0] + 4 ? 0 : 1;
     rowEnd[row] = x + half;
-    ctx.fillText(text, x, baseY + 8 + row * 11);
+    ctx.fillText(text, x, baseY + 8 + row * 14);
   }
 }

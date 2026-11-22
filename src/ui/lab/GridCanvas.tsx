@@ -16,6 +16,7 @@ import {
   type GridRun,
   type Snap,
 } from "./gridDraw";
+import { deviceRatio } from "./canvasKit";
 
 interface Props {
   run: GridRun;
@@ -50,7 +51,7 @@ export function GridCanvas({ run, which, diff, input, editable, values, label }:
   );
 
   const geo = useMemo(
-    () => geometry(size.w, size.h, input.w, input.h),
+    () => geometry(size.w, size.h, input.w, input.h, deviceRatio()),
     [size.w, size.h, input.w, input.h],
   );
 

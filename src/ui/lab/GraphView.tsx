@@ -49,7 +49,7 @@ export function GraphView({
   const drag = useRef<{ node: number; moved: boolean; x0: number; y0: number } | null>(null);
   const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
   const showWeights = input.nodes.length <= 24 && size.w > 300;
-  const r = Math.max(9, Math.min(14, size.w / 50));
+  const r = Math.max(11, Math.min(15, size.w / 46));
 
   const toUnit = (clientX: number, clientY: number) => {
     const rect = ref.current!.getBoundingClientRect();
@@ -152,13 +152,25 @@ export function GraphView({
                 : st === EDGE_REJECTED
                   ? "rgb(var(--ink) / 0.18)"
                   : "rgb(var(--ink) / 0.3)";
-          const width = st === EDGE_TREE ? 4 : cur ? 3.5 : st === EDGE_CANDIDATE ? 2.5 : 1.25;
+          const width = st === EDGE_TREE ? 4 : cur ? 4.5 : st === EDGE_CANDIDATE ? 2.5 : 1.25;
+          const strong = st === EDGE_TREE || cur;
           const x1 = X(input.nodes[a].x);
           const y1 = Y(input.nodes[a].y);
           const x2 = X(input.nodes[b].x);
           const y2 = Y(input.nodes[b].y);
           return (
             <g key={`${a}-${b}`}>
+              {strong && (
+                <line
+                  x1={x1}
+                  y1={y1}
+                  x2={x2}
+                  y2={y2}
+                  stroke="rgb(var(--bg))"
+                  strokeWidth={width + 4}
+                  strokeLinecap="round"
+                />
+              )}
               <line
                 x1={x1}
                 y1={y1}
@@ -166,10 +178,22 @@ export function GraphView({
                 y2={y2}
                 stroke={stroke}
                 strokeWidth={width}
-                strokeDasharray={st === EDGE_REJECTED ? "4 4" : undefined}
+                strokeDasharray={st === EDGE_CANDIDATE && !cur ? "7 4" : undefined}
                 strokeLinecap="round"
                 style={{ transition: "stroke var(--dur-med), stroke-width var(--dur-med)" }}
               />
+              {st === EDGE_REJECTED && (
+                <g
+                  transform={`translate(${(x1 + x2) / 2 + (showWeights ? 16 : 0)}, ${(y1 + y2) / 2})`}
+                  stroke="rgb(var(--ink-3))"
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                  pointerEvents="none"
+                >
+                  <line x1={-3.5} y1={-3.5} x2={3.5} y2={3.5} />
+                  <line x1={-3.5} y1={3.5} x2={3.5} y2={-3.5} />
+                </g>
+              )}
               {editable && tool === "delete" && (
                 <line
                   x1={x1}
@@ -188,10 +212,10 @@ export function GraphView({
               {showWeights && (
                 <g transform={`translate(${(x1 + x2) / 2}, ${(y1 + y2) / 2})`} pointerEvents="none">
                   <rect
-                    x={-11}
-                    y={-7}
-                    width={22}
-                    height={14}
+                    x={-13}
+                    y={-8}
+                    width={26}
+                    height={16}
                     rx={2}
                     fill="rgb(var(--field))"
                     opacity={0.92}
@@ -201,8 +225,8 @@ export function GraphView({
                     dominantBaseline="central"
                     className={
                       cur
-                        ? "fill-hot-ink font-mono text-[10px] font-medium"
-                        : "fill-ink-2 font-mono text-[10px]"
+                        ? "fill-hot-ink font-mono text-[12px] font-bold"
+                        : "fill-ink-2 font-mono text-[12px]"
                     }
                   >
                     {w}
@@ -257,13 +281,15 @@ export function GraphView({
                 textAnchor="middle"
                 dominantBaseline="central"
                 className={
-                  inTree ? "fill-surface font-mono text-[10px]" : "fill-ink font-mono text-[10px]"
+                  inTree
+                    ? "fill-surface font-mono text-[12px] font-bold"
+                    : "fill-ink font-mono text-[12px]"
                 }
               >
                 {i}
               </text>
               {isRoot && (
-                <text y={-r - 6} textAnchor="middle" className="fill-ink-2 font-mono text-[10px]">
+                <text y={-r - 6} textAnchor="middle" className="fill-ink-2 font-mono text-[12px]">
                   root
                 </text>
               )}

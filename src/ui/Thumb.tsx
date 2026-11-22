@@ -3,7 +3,7 @@ import { runVariant, type Experiment } from "@/core/experiment";
 import { CLOSED } from "@/core/grid/machine";
 import { EDGE_TREE } from "@/core/graph/graph";
 import { setupCanvas, usePalette, type Palette } from "./hooks";
-import { CLUSTER_COLORS } from "./lab/colors";
+import { clusterShape, haloLine, hatch, shapePath, stipple } from "./lab/canvasKit";
 
 export function Thumb({
   build,
@@ -64,47 +64,42 @@ function drawThumb(
     const other = exp.b ? runVariant(exp, "b") : null;
     const os =
       other && other.family === "grid" ? other.player.at(other.trace.events.length).state : null;
+    const doneHatch = hatch(ctx, p.closed, 1, 4, 1);
+    const aHatch = hatch(ctx, p.a, 1, 4, 1);
+    const bHatch = hatch(ctx, p.b, -1, 4, 1);
     for (let i = 0; i < g.w * g.h; i++) {
       const x = ox + (i % g.w) * s;
       const y = oy + Math.floor(i / g.w) * s;
       const a = st.status[i] === CLOSED;
       const b = os ? os.status[i] === CLOSED : false;
-      ctx.fillStyle =
-        g.cells[i] === 0
-          ? p.wall
-          : os
-            ? a && b
-              ? p.closed
-              : a
-                ? p.rgb("enc-a", 0.45)
-                : b
-                  ? p.rgb("enc-b", 0.4)
-                  : g.cells[i] > 1
-                    ? p.weight
-                    : p.field
-            : a
-              ? p.closed
-              : st.status[i]
-                ? p.open
-                : g.cells[i] > 1
-                  ? p.weight
-                  : p.field;
+      if (g.cells[i] === 0) {
+        ctx.fillStyle = p.wall;
+        ctx.fillRect(x, y, s + 0.4, s + 0.4);
+        continue;
+      }
+      ctx.fillStyle = p.field;
       ctx.fillRect(x, y, s + 0.4, s + 0.4);
+      if (g.cells[i] > 1) stipple(ctx, x, y, s, s, Math.max(2.2, s / 2), p.weight);
+      let pat: CanvasPattern | null = null;
+      if (os && a && b) {
+        ctx.fillStyle = p.rgb("ink", 0.16);
+        ctx.fillRect(x, y, s + 0.4, s + 0.4);
+      } else if (os ? a || b : a) pat = os ? (a ? aHatch : bHatch) : doneHatch;
+      if (pat) {
+        ctx.fillStyle = pat;
+        ctx.fillRect(x, y, s + 0.4, s + 0.4);
+      } else if (!os && st.status[i]) {
+        ctx.strokeStyle = p.open;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x + s * 0.2, y + s * 0.2, s * 0.6, s * 0.6);
+      }
     }
     const line = (path: number[], color: string, dash = false) => {
-      if (path.length < 2) return;
-      ctx.strokeStyle = color;
-      ctx.lineWidth = Math.max(1.5, s * 0.35);
-      ctx.setLineDash(dash ? [s, s * 0.6] : []);
-      ctx.beginPath();
-      path.forEach((c, k) => {
-        const x = ox + (c % g.w) * s + s / 2;
-        const y = oy + Math.floor(c / g.w) * s + s / 2;
-        if (k) ctx.lineTo(x, y);
-        else ctx.moveTo(x, y);
-      });
-      ctx.stroke();
-      ctx.setLineDash([]);
+      const pts = path.map(
+        (c) =>
+          [ox + (c % g.w) * s + s / 2, oy + Math.floor(c / g.w) * s + s / 2] as [number, number],
+      );
+      haloLine(ctx, pts, color, p.bg, Math.max(1.5, s * 0.35), dash ? [s, s * 0.6] : []);
     };
     line(st.path, os ? p.a : p.path);
     if (os) line(os.path, p.b, true);
@@ -153,10 +148,11 @@ function drawThumb(
     const ox = (W - side) / 2;
     const oy = (H - side) / 2;
     run.input.points.forEach((q, i) => {
-      ctx.fillStyle = st.assign ? CLUSTER_COLORS[st.assign[i] % CLUSTER_COLORS.length] : p.ink3;
-      ctx.beginPath();
-      ctx.arc(ox + q.x * side, oy + (1 - q.y) * side, 1.8, 0, Math.PI * 2);
-      ctx.fill();
+      const a = st.assign ? st.assign[i] : -1;
+      ctx.fillStyle = a >= 0 ? p.cat[a % 8] : p.ink3;
+      ctx.fill(
+        shapePath(a >= 0 ? clusterShape(a) : "circle", ox + q.x * side, oy + (1 - q.y) * side, 2.2),
+      );
     });
   } else {
     const st = run.player.at(end).state;

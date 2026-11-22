@@ -10,6 +10,12 @@
 - Colour tokens are renamed by meaning: `action` for the primary button, `hot` for "look here now", and `enc-*` for the canvas encoding. Every encoding mark is now tested at 3:1 or better against an open cell in both themes.
 - One motion token set (`--ease-out`, `--ease-inout`, `--ease-drawer`, 140, 180 and 240ms) and a `--travel` multiplier that reduced motion sets to 0. Buttons scale to 0.97 on press.
 - The unused infinite `pulse` keyframe is removed.
+- Canvas rendering follows one encoding for all five families: settled cells are hatched, cells in the heap or queue are outlined, the current cell is solid with a ring, results are lines on a halo, walls carry a contour, and mud is a dot stipple. In a comparison, run A and run B differ by hatch direction and path dash as well as colour, so every view passes deuteranopia, protanopia and tritanopia simulation.
+- The board-work trail: the six most recently settled cells stay faintly lit, and the three cells the heap will settle next are numbered on the grid.
+- Grid cells are placed on whole device pixels, and hatches are drawn at device resolution, so the canvas stays sharp at every display scale.
+- k-means clusters use themed colours and a distinct marker shape each, replacing eight fixed colours that ignored the theme and paired red with green.
+- No canvas or SVG text is smaller than 12px. Legends show the same hatch, outline, line or dot as the canvas instead of flat squares.
+- Stepping backward animates each cell as the exact inverse of stepping forward.
 
 ### Changed
 

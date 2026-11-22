@@ -4,7 +4,7 @@ The system of record for how Stride looks, moves and reads. Code and this file c
 
 Each section states the user intent, the rules, and how the rule is verified. Rules marked **must** are enforced by a test or a script; the rest are reviewed by eye at the gates.
 
-Status: **foundations** (tokens, type, encoding grammar, motion tokens). Canvas rendering, components, views, responsive layout, motion, accessibility, presentation mode, export and repo presentation are added gate by gate.
+Status: **foundations and canvas** (tokens, type, encoding grammar, motion tokens, canvas rendering for all five families). Components, views, responsive layout, motion, accessibility, presentation mode, export and repo presentation are added gate by gate.
 
 ## World
 
@@ -65,8 +65,60 @@ Rules:
 
 - **Must:** every mark token is at least 3:1 against an open cell (`field`) in both themes, and a wall is separable from an open cell by fill or by its contour. Verified by `contrast.test.ts`.
 - The categorical hues (`enc-heap`, `enc-a`, `enc-b`) pass the dataviz validator's colour-vision checks in both themes (worst ΔE 16.2 deutan dark, 17.0 protan light). Run A is coral (dark) or berry (light), run B is cyan or cobalt, the heap is canary or orange. A third hue for "both runs" was tried and rejected: every candidate violet collided with run B under deuteranopia. `enc-done` and `enc-cost` are deliberately neutral; they are told apart by texture (lines against dots), never by colour.
-- No red and green pair is used for any meaning.
-- Every encoding a learner must decode has a visible legend, always available beside the view.
+- No red and green pair is used for any meaning, except that k-means clusters 3 and 6 (aqua and green) may both appear when k is 6 or more; their marker shapes (triangle, plus) carry the difference.
+- Every encoding a learner must decode has a visible legend, always available beside the view. Legend swatches are drawn marks (`src/ui/lab/Swatch.tsx`), never flat colour squares, so the legend shows the same hatch, outline, line or dot as the canvas.
+
+### Cluster identity (k-means)
+
+Eight categorical tokens `--cat-1` to `--cat-8` (blue, orange, aqua, yellow, pink, green, violet, red), stepped separately for each theme and validated with the dataviz checker on Stride's own surfaces (worst adjacent ΔE 9.1 protan light, 8.4 protan dark; every slot at least 3:1). Each cluster also has its own marker shape in fixed order: circle, square, triangle, diamond, inverted triangle, plus, hexagon, star (`SHAPES` in `canvasKit.ts`). The order never changes with k, so a cluster keeps its colour and shape when k changes. Centroids are a ring on the board colour holding the cluster's shape.
+
+## Canvas rendering
+
+The canvas is the figure. All paint code shares `src/ui/lab/canvasKit.ts`.
+
+### Pixels
+
+- **Must:** grid geometry is computed in device pixels (`geometry(…, dpr)`), so every cell edge lands on a whole device pixel at 1×, 1.25×, 1.5×, 2× and 2.5×. Verified by `canvas.test.ts`.
+- Hairlines (grid lines, ruler ticks, wall contours) are drawn on half-device-pixel centres with `crisp()`, one device pixel wide.
+- Hatches are `CanvasPattern` tiles built at device resolution and anchored to the canvas origin, so hatch lines run continuously across neighbouring cells and stay sharp on a 4K projector. Mud dots sit on one lattice anchored to the canvas origin for the same reason.
+
+### Text on the canvas
+
+- **Must:** no canvas or SVG text under 12px. `canvasFont()` clamps every size; a source scan in `canvas.test.ts` rejects literal sizes below 12px anywhere in `src/ui`.
+- Coordinates, indices and values use Atkinson Hyperlegible Mono; words on the canvas ("Heap", "Merge buffer", "Empty") use Atkinson Hyperlegible Next at weight 700.
+- Labels never sit on a busy mark without a halo: rank badges have a board-coloured ring, paths have a board-coloured underlay, graph weights sit on a field-coloured plate.
+
+### Pathfinding grid
+
+| Element              | Drawing                                                                                                                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Open cell            | `field`, with one-device-pixel `grid-line` hairlines between cells from 6px cells up                                                                                                              |
+| Wall                 | Solid `enc-wall`; every edge that meets an open cell gets a `enc-wall-edge` contour                                                                                                               |
+| Mud                  | Dot stipple in `enc-cost` at 75%; spacing falls from 7.5px to 3.6px as the weight rises, weight digit in the corner from 24px cells                                                               |
+| Settled              | `enc-done` at 12% plus the "/" hatch                                                                                                                                                              |
+| In the heap or queue | Outline inset 16% from the cell edge                                                                                                                                                              |
+| Heap rank            | The three cells the heap will settle next carry numbered badges 1 to 3, from 14px cells, single run only                                                                                          |
+| Current              | Solid `enc-current` and a ring 2.5px outside the cell                                                                                                                                             |
+| Board-work trail     | The six most recently settled cells keep a `enc-current` wash, oldest faintest (8% to 34%). Computed from `closedAt` in the trace, so scrubbing in either direction shows exactly the right trail |
+| Path                 | `enc-path` line, 20% of the cell, on a board-coloured halo                                                                                                                                        |
+| Comparison           | Run A: "/" hatch in `enc-a`, solid path. Run B: "\\" hatch in `enc-b`, dashed path, outlined current. Both: ink at 16%                                                                            |
+| Start, target        | From 16px cells, ink tiles lettered S and T (the target tile turns the path colour when found); below that, a ringed disc and a crosshair                                                         |
+
+### Sorting and searching
+
+- Unsorted values are ink at 34%; sorted values are the heavy neutral `enc-done`, plus the hatch where bars are at least 7px wide; compared values get a heap-coloured outline; a moved or written value is solid `enc-current`; the pivot is solid ink with its pointer.
+- The active range (quicksort's current call, the heap region, the candidate range in search) is a faint ink lift (7%), never a darker hole.
+- Search: the probe is `enc-current`, the found value is `enc-path`, and the target value is a neutral dashed reference line labelled in ink, so the "now" colour means only now.
+- Pointer labels are 12px, joined by a space, on up to two staggered rows 14px apart.
+
+### Spanning trees
+
+- Tree edges are 4px `enc-path` on a halo; the edge under test is 4.5px `enc-current` on a halo; candidate edges are dashed `enc-heap`; rejected edges are faint with a small × at the midpoint; untouched edges are ink at 30%.
+- Nodes in the tree are filled ink, others are open; node radius is at least 11px so two-digit 12px labels fit.
+
+### Reversible motion
+
+Cell transitions are symmetric, so stepping back reads as the exact inverse of stepping forward: a cell joining the heap fades in while its outline grows from 65% to full size, and a cell leaving it fades out while the outline shrinks to 65%; a settled hatch fades in or out over the same duration; a cell being settled flashes a fading `enc-current` outline. Durations follow the playback rate (70 to 240ms, 200ms when paused) and are skipped entirely under reduced motion.
 
 ## Type
 
