@@ -1,75 +1,50 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/cover-dark.png">
-  <img alt="Stride: an algorithm lab that records every step and plays it back next to the data structure. 18 algorithms, 5 families, side-by-side compare, MIT." src=".github/assets/cover-light.png" width="100%">
-</picture>
+# Stride
 
-<p align="center">
-  <a href="https://github.com/Mahan-Imanian/Stride/actions/workflows/ci.yml"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/Mahan-Imanian/Stride/ci.yml?branch=main&style=flat-square&label=CI"></a>
-  <a href="https://github.com/Mahan-Imanian/Stride/actions/workflows/deploy.yml"><img alt="Deploy status" src="https://img.shields.io/github/actions/workflow/status/Mahan-Imanian/Stride/deploy.yml?branch=main&style=flat-square&label=deploy"></a>
-  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-3d7bfd?style=flat-square"></a>
-  <a href="https://mahan-imanian.github.io/Stride/"><img alt="Open the live demo" src="https://img.shields.io/badge/live_demo-open-ff6a3d?style=flat-square"></a>
-</p>
+An algorithm lab for lectures and self-study. Stride records every operation of a run and plays it back next to the data structure the algorithm reads from, such as the BFS queue, Dijkstra's heap or quicksort's call stack. Each step has a caption with the actual values, and two algorithms can run on the same input so their counts compare directly.
 
-<p align="center">
-  <a href="https://mahan-imanian.github.io/Stride/"><b>Open the lab</b></a> ·
-  <a href="#quick-start">Quick start</a> ·
-  <a href="#what-you-can-do">Features</a> ·
-  <a href="#algorithms">Algorithms</a> ·
-  <a href="#how-it-works">How it works</a> ·
-  <a href="docs/internals.md">Internals</a>
-</p>
+**[Open the lab](https://mahan-imanian.github.io/Stride/)** · [Quick start](#quick-start) · [Algorithms](#algorithms) · [How it works](#how-it-works) · [Internals](docs/internals.md)
 
-<br>
-
-<a href="https://mahan-imanian.github.io/Stride/"><img alt="The lab 162 steps into Dijkstra and A* on one grid: both expansions overlaid, Dijkstra's pseudocode on the pq.push line, its min-heap with 18 entries, and a caption for each run" src=".github/assets/showcase.png" width="100%"></a>
-
-Stride records every operation of a run and plays it back next to the data structure the algorithm reads from, such as the BFS queue, Dijkstra's heap or quicksort's call stack. Each step has a caption with the actual values, and two algorithms can run on the same input so their counts can be compared directly.
+<a href="https://mahan-imanian.github.io/Stride/"><img alt="The lab 160 steps into A* vs Dijkstra on the blackboard theme: the question as the title, Dijkstra's settled cells hatched one way and A*'s the other, both captions with their invariants, Dijkstra's min-heap and pseudocode, and the phase rail under the scrubber" src=".github/assets/showcase.png" width="100%"></a>
 
 ## What you can do
 
+### Start from a question
+
+Explore lists 14 prepared experiments, grouped by family, each titled with its question, such as _Why does breadth-first search always find the fewest moves?_ or _On nearly sorted data, can a quadratic sort beat merge sort?_ Opening one builds the input and records the run. In the lab the question stays at the top, and the result appears under it when the run ends. Change a wall, the pivot rule, the heuristic or the learning rate and the run is recorded again.
+
+<img alt="The Explore page on the blackboard theme: the intro beside a finished A* versus Dijkstra board, then the experiments grouped by family, each titled with its question" src=".github/assets/f-explore.png" width="100%">
+
 ### Compare two algorithms on the same input
 
-Run two algorithms, or two settings of one, on the same grid. The overlay shows both expansions at once, and the Compare panel gives the verdict in plain numbers ("both find a path of cost 46; A\* expands 55% fewer cells") and points to the first cell where the two orders diverge.
+Run two algorithms, or two settings of one, on the same grid. Both expansions share one board: run A hatches one way, run B the other, and cells both expanded are a flat tint. The Compare tab gives the verdict in plain numbers ("both find a path of cost 46; A\* expands 55% fewer cells") and points to the first cell where the two orders diverge.
 
-<img alt="The Compare panel after Dijkstra and A* finish: both paths cost 46, A* expanded 295 cells to Dijkstra's 658, 55% fewer, and the two orders diverge at (12, 4)" src=".github/assets/f-compare.png" width="100%">
-
-<img alt="Playback of the same run from step 0: the overlay, Dijkstra's pseudocode, its min-heap and both captions advance together until both paths are found, then the Compare panel shows the verdict" src="docs/screenshots/compare.gif" width="100%">
+<img alt="A* vs Dijkstra at the last step on the whiteboard theme: Result, both find a path of cost 46, Dijkstra expanded 658 cells and A* 295, with A*'s dashed path across the board" src=".github/assets/f-compare.png" width="100%">
 
 ### See the structure the algorithm is deciding from
 
-The BFS queue, DFS stack, Dijkstra's min-heap (stale entries included), A\*'s open set with g, h and f, quicksort's call stack, merge sort's buffer and Kruskal's union-find fragments are always visible. Each step's caption uses real values, for example "a cheaper route to (9, 8) through (10, 8): dist 7 → 6", and the pseudocode line moves with it.
+The BFS queue, DFS stack, Dijkstra's min-heap (stale entries included), A\*'s open set with g, h and f, quicksort's call stack, merge sort's buffer and Kruskal's union-find fragments sit beside the board. Each caption uses real values, for example "a cheaper route to (17, 18) through (17, 17): g 21 → 19", and the pseudocode line moves with it.
 
-<img alt="Dijkstra 61 steps in: expanded cells and the frontier on the grid, the pq.push line highlighted, and the min-heap ordered by distance with 18 entries waiting" src=".github/assets/f-heap.png" width="100%">
+<img alt="Quicksort's worst case 9 steps in: last-element pivot against median-of-three, pivot 74 landing at index 23 in both, lo, i and hi pointers under the bars, and a call stack nine calls deep" src=".github/assets/f-quicksort.png" width="100%">
 
-<img alt="The same Dijkstra step in the light theme: the caption 'Discover (5, 8) · dist 9', the highlighted pseudocode line, the current cell and the heap entry (4, 6) that is settled next" src=".github/assets/f-caption.png" width="100%">
+<img alt="Prim and Kruskal 14 steps in: Prim's candidate edges dashed around its tree, Kruskal joining two fragments with edge 0–18, and Prim's candidate heap with stale edges struck through" src=".github/assets/f-kruskal.png" width="100%">
 
-<img alt="Quicksort placing pivot 21 at index 5: lo, i and hi pointers under the bars, the active range shaded, and a call stack five calls deep" src=".github/assets/f-quicksort.png" width="100%">
+In _Bad starting centroids_, k-means++ settles at inertia 1.657 after 2 iterations, while centroids started in a corner settle at 7.718 after 4. Each cluster has its own colour and marker shape, so the board still reads in greyscale.
 
-<img alt="Kruskal skipping edge 5–7 (weight 19) because both ends are already connected, next to the sorted edge list, rejected edges struck through, and 8 fragments left" src=".github/assets/f-kruskal.png" width="100%">
+<img alt="k-means++ and corner-started k-means side by side on four blobs: regions of the nearest centroid, circle, square, triangle and diamond markers, and the result line 1.657 against 7.718" src=".github/assets/f-kmeans.png" width="100%">
 
-### Prepared experiments
+### Teach with it
 
-Explore lists 14 prepared experiments, each with a question such as _Why does breadth-first search always find the fewest moves?_ or _On nearly sorted data, can a quadratic sort beat merge sort?_ The input is built and the run is recorded when you open one. Change a wall, the pivot rule, the heuristic or the learning rate and the run is recorded again.
+- **Readable from the back of the room.** A charcoal blackboard theme and a whiteboard light theme, set in Atkinson Hyperlegible. State on the board is shown by pattern as well as colour (hatching for settled, an outline for waiting, a ringed solid for the current cell, a haloed line for the result), so it holds up on a washed-out projector and for colour-blind students.
+- **Phase rail.** Marks under the scrubber show where a run reaches a milestone, such as the target being discovered, and the status line names the next one.
+- **Hide the answers.** <kbd>A</kbd> hides the captions and the result so the class can predict the next step, then reveal it. The counts in the run strip stay visible for now.
+- **Presentation mode.** <kbd>P</kbd> goes full screen with large type and toggles for code, state, explanation and metrics.
+- **Share links.** Input, seed, settings, the experiment and optionally the current step are encoded in the URL, and JSON export uses the same format.
 
-<img alt="The Explore page: the intro next to a finished A* versus Dijkstra run, with the first prepared experiments below, each titled with its question" src=".github/assets/f-explore.png" width="100%">
+<img alt="Answers hidden at the end of A* vs Dijkstra: the captions are replaced by Predict the next step, then reveal it, and a Reveal button" src=".github/assets/f-hidden.png" width="100%">
 
-In _Bad starting centroids_, k-means++ settles at inertia 1.657 after 2 iterations, while centroids started in a corner settle at 7.718 after 4, with one cluster left empty.
+<img alt="Presentation mode: BFS in a maze with the queue, pseudocode and caption in large type" src=".github/assets/f-present.png" width="100%">
 
-<img alt="k-means++ and corner-started k-means side by side on four blobs: Voronoi regions, final centroids, and the Compare panel with inertia 1.657 against 7.718" src=".github/assets/f-kmeans.png" width="100%">
-
-### Built to be read from the back of a room
-
-The lab is being redesigned for lectures. Each experiment opens with its question as the page title, and the verdict appears under it when the run ends. The board uses a charcoal blackboard theme and a whiteboard light theme, set in Atkinson Hyperlegible.
-
-On the canvas, state is shown by pattern as well as colour, so it survives a washed-out projector and colour blindness: hatching for settled cells, an outline for cells waiting in the frontier, a ringed solid for the current one and a haloed line for the result. In a comparison, run A hatches one way and run B the other. The transport has a phase rail, so you can jump to where a run starts settling or finds its path, and <kbd>A</kbd> hides counts and verdicts so a class can predict before they see the answer. Short invariants under the caption are drafts for now.
-
-The screenshots on this page are from before the redesign and will be replaced.
-
-### Presentation mode and share links
-
-Press <kbd>P</kbd> for presentation mode: full screen, large type, and toggles for code, state, explanation and metrics. Every experiment is a link: input, seed, settings and optionally the current step are encoded in the URL, and JSON export uses the same format.
-
-<img alt="Presentation mode: BFS in a maze with the live queue and the caption in large type" src=".github/assets/f-present.png" width="100%">
+The invariant lines under each caption and the prompt "Predict the next step, then reveal it." are draft text, shown with a dotted underline in the app until they are reviewed.
 
 ## Quick start
 
@@ -154,9 +129,10 @@ CI runs lint, typecheck, tests and both builds on every push and pull request to
 
 - Accessibility has been checked with Lighthouse (`npm run lighthouse`) and a token contrast test, not with a screen reader. Nobody has used the app with NVDA or VoiceOver yet.
 - Frame times have only been measured in headless Chrome, which paces frames at 60 Hz. Nothing has been measured on a 120 or 144 Hz display or on a phone.
-- On Lighthouse's simulated mobile connection, first paint waits for the 151 KB (gzip) main bundle, so the mobile performance score is lower than desktop.
+- On Lighthouse's simulated mobile connection, first paint waits for the 154 KB (gzip) main bundle, so the mobile performance score is lower than desktop.
 - The UI tests run in jsdom. There are no browser end-to-end tests in CI.
 - No data-structure family (BST, hash table) and no Bellman-Ford or topological sort yet.
+- The lecture redesign is in progress. Responsive layout, motion, a screen-reader pass and the planned classroom tools (blank board, clicker support, presenter view, pointer, pen, zoom, QR follow-along, offline use) are not done yet.
 
 See the [changelog](CHANGELOG.md) for what changed between versions.
 
