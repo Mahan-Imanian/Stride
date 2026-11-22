@@ -12,7 +12,7 @@ export function CodePanel({ run, cursor, tone }: { run: Run; cursor: number; ton
 
   return (
     <div
-      className="relative font-mono text-[12.5px] leading-5"
+      className="relative font-mono text-[13px] leading-5"
       role="list"
       aria-label={`${info.name} pseudocode`}
     >
@@ -25,12 +25,8 @@ export function CodePanel({ run, cursor, tone }: { run: Run; cursor: number; ton
             role="listitem"
             aria-current={active ? "step" : undefined}
             className={cn(
-              "relative flex items-start border-l-[3px] py-0.5 transition-[background-color,border-color] duration-med ease-out",
-              active
-                ? tone === "b"
-                  ? "border-enc-b bg-enc-b/10"
-                  : "border-action bg-action/10"
-                : "border-transparent",
+              "relative flex items-start rounded-sm py-0.5 transition-colors duration-med ease-out",
+              active && (tone === "b" ? "bg-enc-b/15" : "bg-hot-soft"),
             )}
           >
             <span className="w-7 shrink-0 select-none pr-2 text-right text-2xs leading-5 text-ink-3">
@@ -48,7 +44,7 @@ export function CodePanel({ run, cursor, tone }: { run: Run; cursor: number; ton
             <span
               className={cn(
                 "min-w-0 flex-1 whitespace-pre-wrap break-words pr-2",
-                active ? "font-medium text-ink" : "text-ink-2",
+                active ? "font-bold text-ink" : "text-ink-2",
               )}
               style={{ paddingLeft: (line.depth ?? 0) * 12 }}
             >

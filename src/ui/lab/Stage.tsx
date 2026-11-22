@@ -1,3 +1,7 @@
+import { Button } from "../primitives";
+import { Eye } from "../icons";
+import { useUI } from "@/store/ui";
+import { INVARIANTS, INVARIANTS_APPROVED } from "@/core/invariants";
 import { Swatch, type SwatchKind } from "./Swatch";
 import { useMemo } from "react";
 import { metricsAt, variantLabel, type Run } from "@/core/experiment";
@@ -336,32 +340,40 @@ export function NowCaption({ large = false, flow = false }: { large?: boolean; f
   const { a: cursorA, b: cursorB } = usePresented();
   const playing = useLab((s) => s.playing);
   const editing = useLab((s) => s.editing);
+  const hidden = useUI((s) => s.answersHidden);
+  const setHidden = useUI((s) => s.setAnswersHidden);
   const a = useMemo(() => explain(runA, cursorA), [runA, cursorA]);
   const b = useMemo(() => (runB ? explain(runB, cursorB) : null), [runB, cursorB]);
   return (
     <div
       className={cn(
-        "relative shrink-0 border-t border-rule bg-surface",
-        flow ? "min-h-[104px]" : "overflow-hidden [contain:strict]",
+        "relative shrink-0 border-t border-rule bg-surface [contain:layout_paint]",
         b && (flow ? "divide-y divide-rule" : "grid grid-cols-2 divide-x divide-rule"),
       )}
-      style={
-        flow
-          ? undefined
-          : {
-              height: large
-                ? PRESENT_ROWS_PX.caption
-                : b
-                  ? STAGE_ROWS_PX.captionCompare
-                  : STAGE_ROWS_PX.caption,
-            }
-      }
+      style={{
+        minHeight: large
+          ? PRESENT_ROWS_PX.caption
+          : b
+            ? STAGE_ROWS_PX.captionCompare
+            : STAGE_ROWS_PX.caption,
+      }}
       data-tour="now"
     >
       {editing ? (
         <p className="px-4 py-3 text-sm text-ink-2" role="status">
           Editing the input. The run is recorded again when you release.
         </p>
+      ) : hidden ? (
+        <div className="flex items-center gap-4 px-4 py-3">
+          <p className={cn("font-bold text-ink", large ? "text-xl" : "text-md")}>Answers hidden</p>
+          <p className="text-sm text-ink-2">
+            <span className="ph">Predict the next step, then reveal it.</span>
+          </p>
+          <Button className="ml-auto" onClick={() => setHidden(false)}>
+            <Eye />
+            Reveal
+          </Button>
+        </div>
       ) : (
         <>
           <Line
@@ -369,16 +381,21 @@ export function NowCaption({ large = false, flow = false }: { large?: boolean; f
             tag={runB ? "a" : undefined}
             algo={getAlgo(runA.algo).short}
             large={large}
-            flow={flow}
-            wrap={!!runB}
+            invariant={INVARIANTS[runA.algo]}
           />
           {b && runB && (
-            <Line e={b} tag="b" algo={getAlgo(runB.algo).short} large={large} flow={flow} wrap />
+            <Line
+              e={b}
+              tag="b"
+              algo={getAlgo(runB.algo).short}
+              large={large}
+              invariant={runB.algo !== runA.algo ? INVARIANTS[runB.algo] : undefined}
+            />
           )}
         </>
       )}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
-        {playing || editing ? "" : `${a.now}. ${a.why}`}
+        {playing || editing || hidden ? "" : `${a.now}. ${a.why}`}
       </div>
     </div>
   );
@@ -389,52 +406,35 @@ function Line({
   tag,
   algo,
   large,
-  flow = false,
-  wrap = false,
+  invariant,
 }: {
   e: ReturnType<typeof explain>;
   tag?: "a" | "b";
   algo: string;
   large: boolean;
-  /** Narrow layout: the caption grows to fit, nothing is cut. */
-  flow?: boolean;
-  /** Two runs side by side: let the title use two lines. */
-  wrap?: boolean;
+  invariant?: string;
 }) {
   return (
-    <div className="flex min-w-0 gap-3 px-4 py-2.5">
+    <div className="flex min-w-0 gap-3 px-4 py-3">
       {tag && <TagAB which={tag} className="mt-0.5 shrink-0" />}
       <div className="min-w-0 flex-1">
-        <p
-          className={cn(
-            "readout font-medium text-ink",
-            flow ? "" : wrap ? "line-clamp-2" : "truncate",
-            large ? "text-lg leading-7" : "text-sm leading-5",
-            !flow && !wrap && (large ? "h-7" : "h-5"),
-          )}
-          title={e.now}
-        >
-          <span className="mr-2 text-hot-ink">{tag ? "" : `${algo} ·`}</span>
+        <p className={cn("font-bold text-ink", large ? "text-xl" : "text-md")}>
+          {!tag && <span className="mr-2 font-medium text-ink-3">{algo}</span>}
           {e.now}
         </p>
-        <p
-          className={cn(
-            "mt-1 text-ink-2",
-            !flow && "line-clamp-2",
-            large ? "text-md leading-6" : "text-sm leading-5",
-            !flow && !wrap && (large ? "h-12" : "h-10"),
-          )}
-        >
-          {e.why}
-        </p>
-        <p className={cn("mt-1 text-xs leading-4 text-ink-3", !flow && "h-4 truncate")}>
-          {e.next && (
-            <>
-              <span className="label mr-1.5">Next</span>
-              {e.next}
-            </>
-          )}
-        </p>
+        <p className={cn("mt-1 text-ink-2", large ? "text-lg" : "text-sm")}>{e.why}</p>
+        {invariant && (
+          <p className={cn("mt-1.5 text-ink-2", large ? "text-md" : "text-xs")}>
+            <span className="mr-1.5 font-bold text-ink">Invariant</span>
+            <span className={cn(!INVARIANTS_APPROVED && "ph")}>{invariant}</span>
+          </p>
+        )}
+        {e.next && (
+          <p className={cn("mt-1.5 text-ink-3", large ? "text-md" : "text-xs")}>
+            <span className="mr-1.5 font-bold text-ink-2">Next</span>
+            {e.next}
+          </p>
+        )}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { useUI } from "@/store/ui";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { fmtCell, type GridInput } from "@/core/grid/model";
 import { CLOSED, OPEN, type GridState } from "@/core/grid/machine";
@@ -42,6 +43,7 @@ export function GridCanvas({ run, which, diff, input, editable, values, label }:
   const palette = usePalette();
   const reduced = useReducedMotion();
   const editing = useLab((s) => s.editing);
+  const hidden = useUI((s) => s.answersHidden);
   const focusCell = useLab((s) => s.focusCell);
   const setFocusCell = useLab((s) => s.setFocusCell);
   const [kbdCell, setKbdCell] = useState<number | null>(null);
@@ -71,6 +73,7 @@ export function GridCanvas({ run, which, diff, input, editable, values, label }:
     terrain,
     editing,
     values,
+    hidden,
     focus: kbdCell ?? focusCell,
     reduced,
     algo: run.algo,
@@ -84,6 +87,7 @@ export function GridCanvas({ run, which, diff, input, editable, values, label }:
     terrain,
     editing,
     values,
+    hidden,
     focus: kbdCell ?? focusCell,
     reduced,
     algo: run.algo,
@@ -158,7 +162,7 @@ export function GridCanvas({ run, which, diff, input, editable, values, label }:
 
   useEffect(() => {
     request.current();
-  }, [geo, terrain, editing, values, kbdCell, focusCell, palette, size.w, size.h]);
+  }, [geo, terrain, editing, values, hidden, kbdCell, focusCell, palette, size.w, size.h]);
 
   useEffect(
     () => () => {

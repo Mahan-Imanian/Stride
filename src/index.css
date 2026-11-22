@@ -211,3 +211,8 @@
   animation-iteration-count: 1 !important;
   transition-duration: 0s !important;
 }
+
+.ph {
+  text-decoration: underline dotted rgb(var(--ink-3));
+  text-underline-offset: 3px;
+}

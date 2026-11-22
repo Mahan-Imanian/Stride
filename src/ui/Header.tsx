@@ -117,11 +117,7 @@ export function Header({ route }: { route: "explore" | "lab" | "saved" }) {
 
   return (
     <header className="sticky top-0 z-30 flex h-12 shrink-0 items-center gap-2 border-b border-rule bg-surface pr-2">
-      <a
-        href="#/"
-        className="flex h-12 items-center gap-2 px-3 text-ink"
-        aria-label="Stride home"
-      >
+      <a href="#/" className="flex h-12 items-center gap-2 px-3 text-ink" aria-label="Stride home">
         <Mark />
         <span className={cn("text-md font-semibold tracking-tight", narrow && isLab && "sr-only")}>
           Stride
@@ -263,11 +259,7 @@ export function Header({ route }: { route: "explore" | "lab" | "saved" }) {
             <MenuSeparator />
             <MenuItem
               onSelect={() =>
-                window.open(
-                  "https://github.com/Mahan-Imanian/Stride",
-                  "_blank",
-                  "noopener",
-                )
+                window.open("https://github.com/Mahan-Imanian/Stride", "_blank", "noopener")
               }
             >
               <Github /> Source on GitHub

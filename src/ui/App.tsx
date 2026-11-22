@@ -1,4 +1,4 @@
-import { Component, lazy, Suspense, useEffect, type ReactNode } from "react";
+import { Component, lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { parseHash, useHash } from "@/lib/router";
 import { useLayout } from "@/lib/layout";
 import { isDarkTheme, useSettings } from "@/store/settings";
@@ -46,8 +46,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
     if (!this.state.error) return this.props.children;
     return (
       <div role="alert" className="mx-auto max-w-[560px] px-6 py-20">
-        <p className="label mb-2">Something broke</p>
-        <h1 className="text-xl font-semibold">This experiment hit an error.</h1>
+        <h1 className="text-2xl font-bold">This experiment hit an error.</h1>
         <p className="mt-2 text-ink-2">
           Your saved experiments are safe. Reloading the explore page usually fixes it.
         </p>
@@ -111,9 +110,7 @@ export default function App() {
             {route.name === "explore" && <Explore />}
             {route.name === "saved" && <Saved />}
             {route.name === "lab" && (
-              <Suspense
-                fallback={<p className="px-6 py-10 text-sm text-ink-3">Loading the lab…</p>}
-              >
+              <Suspense fallback={<DelayedLoading />}>
                 <Lab query={route.query} setupOpen={setupOpen} setSetupOpen={setSetupOpen} />
               </Suspense>
             )}
@@ -130,5 +127,18 @@ export default function App() {
       <PerfHud />
       <Toaster offset={route.name === "lab" && layout === "narrow" ? 150 : 24} />
     </TooltipProvider>
+  );
+}
+
+function DelayedLoading() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => setShow(true), 300);
+    return () => window.clearTimeout(t);
+  }, []);
+  return (
+    <p role="status" className="px-6 py-10 text-md text-ink-2">
+      {show ? "Loading the lab…" : ""}
+    </p>
   );
 }

@@ -4,7 +4,7 @@ The system of record for how Stride looks, moves and reads. Code and this file c
 
 Each section states the user intent, the rules, and how the rule is verified. Rules marked **must** are enforced by a test or a script; the rest are reviewed by eye at the gates.
 
-Status: **foundations and canvas** (tokens, type, encoding grammar, motion tokens, canvas rendering for all five families). Components, views, responsive layout, motion, accessibility, presentation mode, export and repo presentation are added gate by gate.
+Status: **foundations, canvas and components** (tokens, type, encoding grammar, motion tokens, canvas rendering for all five families, the component layer). Views, responsive layout, motion, accessibility, presentation mode, export and repo presentation are added gate by gate.
 
 ## World
 
@@ -119,6 +119,44 @@ The canvas is the figure. All paint code shares `src/ui/lab/canvasKit.ts`.
 ### Reversible motion
 
 Cell transitions are symmetric, so stepping back reads as the exact inverse of stepping forward: a cell joining the heap fades in while its outline grows from 65% to full size, and a cell leaving it fades out while the outline shrinks to 65%; a settled hatch fades in or out over the same duration; a cell being settled flashes a fading `enc-current` outline. Durations follow the playback rate (70 to 240ms, 200ms when paused) and are skipped entirely under reduced motion.
+
+## Components
+
+### Primitives (`src/ui/primitives.tsx`)
+
+- Buttons: 8px radius; heights 32 (`sm`), 36 (`md`), 44 (`lg`); icon buttons 36 or 44. One `primary` per view, ink-filled. Press scales to 0.97.
+- **Must:** on a coarse pointer (`@media (pointer: coarse)`) every button, icon button and segmented option is at least 44 by 44px. Desktop density is unchanged. Verified by a script at 320, 360 and 390px in the gate checks.
+- Icons inside buttons never shrink, so a fixed-width button cannot squeeze its icon to a dot.
+- Menus scale in from their trigger (`--radix-dropdown-menu-content-transform-origin`), tooltips from theirs.
+- Dialogs fade and rise when opened by a click. Dialogs opened from the keyboard (keyboard help on `?`, the command palette on Ctrl K or `/`) appear instantly: they are opened many times a session, and motion there only adds delay.
+
+### Transport (`src/ui/lab/Transport.tsx`)
+
+- Order: jump to start, previous milestone, step back, play (labelled Run, Pause, Resume or Replay), step forward, next milestone, jump to end, bookmark, then the hide-the-answer toggle.
+- **Phase rail.** The scrubber track is divided at the run's own checkpoints ("Target discovered", "Half the tree", "Converged", …), each segment as long as its share of operations, passed segments in ink. Run B's checkpoints and bookmarks are thin ticks above it. It replaces a per-pixel colour barcode of event types that had no legend.
+- **Readout:** "Step 60 of 659" in bold, then the operation count, the rate ("55 steps a second") and "Next milestone: Target discovered" in quieter text. No middle-dot strings, no units in monospace.
+- Phones: three rows (rail; buttons with the answers toggle; step size, counter, a single speed button that cycles). Below 360px the play button is icon-only, its label kept for screen readers.
+
+### Narration (`NowCaption`, `Line`)
+
+- The caption grows to fit; nothing is clamped or cut with an ellipsis. The stage grid gives it an `auto` row with the old fixed height as its minimum, and an explicit `minmax(0,1fr)` column so long text wraps instead of widening the stage.
+- Each run's caption has four parts, in order: what happened (bold, 16px; 22px in presentation mode), why it was allowed, the **invariant** (what stays true at every step), and what happens next.
+- Invariants live in `src/core/invariants.ts`, one per algorithm. Until they are approved they render with a dotted underline (`.ph`), the same mark used for any copy awaiting approval.
+
+### Structure panels (`StatePanel`)
+
+- Heaps and queues are real tables (`table`, `row`, `columnheader`, `cell`) so screen readers announce row and column. Rows keep their identity and move to their new rank by transform; the row that leaves next is tinted `hot-soft` and bold; stale heap entries are struck through and announced as stale; a row that just entered is coloured `hot-ink` with no entrance animation.
+- The highlighted pseudocode line is a full-width `hot-soft` tint (run B: cyan at 15%) with bold text, never a coloured left border.
+
+### Hide the answer
+
+`A` or the eye button hides what gives the answer away: the caption narration (replaced by "Answers hidden" and a Reveal button), the path, the target's found state and the heap-rank badges on the grid, and the Compare verdict. The structure panels stay, because they are the evidence a student reasons from. Nothing is announced to screen readers while answers are hidden.
+
+### States
+
+- Loading: the lab chunk's fallback appears only after 300ms, so a fast load never flashes a loader.
+- Error: an unhandled error shows the message, says saved experiments are safe, and offers Back to Explore. A malformed share link loads a default experiment under an alert banner with a 36px dismiss button.
+- Errors are bold `hot-ink` text with `role="alert"`; no coloured rules.
 
 ## Type
 

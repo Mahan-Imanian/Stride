@@ -1,13 +1,16 @@
+import { useUI } from "@/store/ui";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { Run } from "@/core/experiment";
 import { groupIndexAt, nextGroupCursor, prevGroupCursor } from "@/core/trace";
 import { PRESENT_ROWS_PX, STAGE_ROWS_PX } from "@/lib/layout";
 import { cn } from "@/lib/utils";
 import { baseRate, position, SPEEDS, totalLength, useLab, type Granularity } from "@/store/lab";
 import { usePresented } from "../clock";
-import { setupCanvas, useElementSize, usePalette, type Palette } from "../hooks";
+import { useElementSize } from "../hooks";
+import { nextMilestone, phases } from "./milestones";
 import {
   Bookmark,
+  Eye,
+  EyeOff,
   FlagNext,
   FlagPrev,
   Minus,
@@ -23,75 +26,6 @@ import {
 import { useCommitCounter } from "../perf";
 import { Button, IconButton, Segmented } from "../primitives";
 
-type Klass = 0 | 1 | 2 | 3 | 4;
-
-function classify(k: string): Klass {
-  switch (k) {
-    case "push":
-    case "compare":
-    case "probe":
-    case "consider":
-    case "assign":
-    case "gradient":
-      return 1;
-    case "pop":
-    case "swap":
-    case "write":
-    case "update":
-      return 2;
-    case "found":
-    case "sorted":
-    case "accept":
-    case "converged":
-      return 3;
-    case "nopath":
-    case "absent":
-    case "diverged":
-      return 4;
-    default:
-      return 0;
-  }
-}
-
-function tapeColor(p: Palette, k: Klass): string {
-  return [p.ink3, p.open, p.closed, p.path, p.current][k];
-}
-
-function drawTape(
-  ctx: CanvasRenderingContext2D,
-  run: Run,
-  total: number,
-  W: number,
-  y: number,
-  h: number,
-  p: Palette,
-) {
-  const events = run.trace.events as { k: string }[];
-  const cols = Math.max(1, Math.floor(W));
-  const counts = new Uint16Array(cols * 5);
-  for (let i = 0; i < events.length; i++) {
-    const c = Math.min(cols - 1, Math.floor((i / Math.max(1, total)) * cols));
-    counts[c * 5 + classify(events[i].k)]++;
-  }
-  for (let c = 0; c < cols; c++) {
-    let best: Klass = 0;
-    let bn = 0;
-    let sum = 0;
-    for (let k = 0; k < 5; k++) {
-      const n = counts[c * 5 + k];
-      sum += n;
-      if (n > bn || (n === bn && k > best && n > 0)) {
-        bn = n;
-        best = k as Klass;
-      }
-    }
-    if (!sum) continue;
-    const rare = counts[c * 5 + 3] + counts[c * 5 + 4];
-    ctx.fillStyle = tapeColor(p, rare ? (counts[c * 5 + 4] ? 4 : 3) : best);
-    ctx.fillRect(c, y, 1, h);
-  }
-}
-
 function Scrubber({ large }: { large?: boolean }) {
   const runA = useLab((s) => s.runA);
   const runB = useLab((s) => s.runB);
@@ -101,23 +35,11 @@ function Scrubber({ large }: { large?: boolean }) {
   const presented = usePresented();
   const pos = runB ? Math.max(presented.a, presented.b) : presented.a;
   const [box, size] = useElementSize<HTMLDivElement>();
-  const tape = useRef<HTMLCanvasElement>(null);
   const fill = useRef<HTMLDivElement>(null);
   const thumb = useRef<HTMLDivElement>(null);
-  const palette = usePalette();
   const [hover, setHover] = useState<{ x: number; at: number } | null>(null);
   const dragging = useRef(false);
-  const tapeH = runB ? 12 : 6;
-
-  useLayoutEffect(() => {
-    const el = tape.current;
-    if (!el || size.w < 2) return;
-    const ctx = setupCanvas(el, size.w, tapeH);
-    if (!ctx) return;
-    ctx.clearRect(0, 0, size.w, tapeH);
-    drawTape(ctx, runA, total, size.w, 0, runB ? 5 : 6, palette);
-    if (runB) drawTape(ctx, runB, total, size.w, 7, 5, palette);
-  }, [runA, runB, total, size.w, palette, tapeH]);
+  const segs = useMemo(() => phases(runA, total), [runA, total]);
 
   useLayoutEffect(() => {
     let raf = 0;
@@ -143,11 +65,10 @@ function Scrubber({ large }: { large?: boolean }) {
   const marks = useMemo(
     () =>
       [
-        ...runA.trace.checkpoints.map((c) => ({ ...c, kind: "a" as const })),
         ...(runB?.trace.checkpoints.map((c) => ({ ...c, kind: "b" as const })) ?? []),
         ...bookmarks.map((b) => ({ at: b, label: "Bookmark", kind: "bookmark" as const })),
       ].filter((m) => m.at > 0 && m.at <= total),
-    [runA, runB, bookmarks, total],
+    [runB, bookmarks, total],
   );
 
   const atX = (clientX: number) => {
@@ -192,8 +113,7 @@ function Scrubber({ large }: { large?: boolean }) {
             key={`${m.kind}${m.at}${i}`}
             className={cn(
               "absolute top-0 w-px",
-              m.kind === "bookmark" ? "h-3 bg-focus" : "h-2.5",
-              m.kind === "a" && "bg-action",
+              m.kind === "bookmark" ? "h-3 w-0.5 bg-focus" : "h-2.5 w-0.5",
               m.kind === "b" && "bg-enc-b",
             )}
             style={{ left: `${(m.at / Math.max(1, total)) * 100}%` }}
@@ -221,18 +141,27 @@ function Scrubber({ large }: { large?: boolean }) {
         onPointerCancel={() => (dragging.current = false)}
         onPointerLeave={() => setHover(null)}
       >
-        <canvas
-          ref={tape}
-          className="pointer-events-none absolute inset-x-0 top-1 w-full"
-          style={{ height: tapeH }}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-2 h-1.5 overflow-hidden rounded-full"
           aria-hidden="true"
-        />
-        <div className="pointer-events-none absolute inset-x-0 bottom-2 h-[3px] bg-rule-strong">
+        >
+          <div className="absolute inset-0 bg-rule" />
           <div
             ref={fill}
-            className="h-full w-full origin-left bg-ink"
+            className="absolute inset-0 origin-left bg-ink"
             style={{ transform: "scaleX(0)" }}
           />
+          {segs.length > 1 &&
+            segs.length <= 48 &&
+            segs
+              .slice(1)
+              .map((sg) => (
+                <span
+                  key={sg.start}
+                  className="absolute inset-y-0 w-[3px] -translate-x-1/2 bg-surface"
+                  style={{ left: `${(sg.start / Math.max(1, total)) * 100}%` }}
+                />
+              ))}
         </div>
         <div
           ref={thumb}
@@ -288,30 +217,38 @@ export function Transport({ compact, present }: { compact?: boolean; present?: b
   const big = compact || present;
 
   const digits = String(Math.max(total, groups)).length;
+  const next = nextMilestone(runA, presented.a);
   const counterLine = compact ? (
-    <p className="readout shrink-0 whitespace-nowrap text-xs text-ink-2">
-      <span className="inline-block text-right text-ink" style={{ minWidth: `${digits}ch` }}>
-        {granularity === "step" ? g : pos}
+    <p className="shrink-0 whitespace-nowrap text-sm">
+      <span className="font-bold">
+        {granularity === "step" ? "Step" : "Operation"}{" "}
+        <span className="readout inline-block text-right" style={{ minWidth: `${digits}ch` }}>
+          {granularity === "step" ? g : pos}
+        </span>{" "}
+        of <span className="readout">{granularity === "step" ? groups : total}</span>
       </span>
-      /{granularity === "step" ? `${groups} steps` : `${total} ops`}
     </p>
   ) : (
-    <p className="readout shrink-0 whitespace-nowrap text-xs text-ink-2">
-      <span className="inline-block text-right text-ink" style={{ minWidth: `${digits}ch` }}>
-        {g}
+    <p className="flex min-w-0 shrink items-baseline gap-3 overflow-hidden whitespace-nowrap text-sm">
+      <span className="font-bold text-ink">
+        Step{" "}
+        <span className="readout inline-block text-right" style={{ minWidth: `${digits}ch` }}>
+          {g}
+        </span>{" "}
+        of <span className="readout">{groups}</span>
       </span>
-      /{groups} steps
-      <span className="px-2 text-ink-3">·</span>
-      op{" "}
-      <span className="inline-block text-right" style={{ minWidth: `${String(total).length}ch` }}>
-        {pos}
+      <span className="text-xs text-ink-2">
+        Operation <span className="readout">{pos}</span> of <span className="readout">{total}</span>
       </span>
-      /{total}
-      <span className="px-2 text-ink-3">·</span>
-      <span className="inline-block w-[11ch] text-ink-3">
-        {rate < 10 ? rate.toFixed(1) : Math.round(rate)} {granularity === "step" ? "steps" : "ops"}
-        /s
+      <span className="text-xs text-ink-3">
+        <span className="readout">{rate < 10 ? rate.toFixed(1) : Math.round(rate)}</span>{" "}
+        {granularity === "step" ? "steps" : "operations"} a second
       </span>
+      {next && (
+        <span className="truncate text-xs text-ink-2">
+          Next milestone: <span className="font-bold text-ink">{next}</span>
+        </span>
+      )}
     </p>
   );
 
@@ -367,11 +304,13 @@ export function Transport({ compact, present }: { compact?: boolean; present?: b
         variant="primary"
         size={big ? "lg" : "md"}
         onClick={() => (atEnd && !playing ? restart() : toggle())}
-        className={cn("mx-1 w-[104px]")}
+        className={cn("mx-1 w-[104px]", compact && "max-[359px]:w-11 max-[359px]:px-0")}
         data-tour="play"
       >
         {playing ? <Pause /> : atEnd ? <Restart /> : <Play />}
-        {playing ? "Pause" : atEnd ? "Replay" : atStart ? "Run" : "Resume"}
+        <span className={cn(compact && "max-[359px]:sr-only")}>
+          {playing ? "Pause" : atEnd ? "Replay" : atStart ? "Run" : "Resume"}
+        </span>
       </Button>
       <IconButton
         label={granularity === "step" ? "Step forward" : "Forward one operation"}
@@ -404,6 +343,19 @@ export function Transport({ compact, present }: { compact?: boolean; present?: b
     </div>
   );
 
+  const answersHidden = useUI((s) => s.answersHidden);
+  const setAnswersHidden = useUI((s) => s.setAnswersHidden);
+  const answersCtl = (
+    <IconButton
+      label={answersHidden ? "Show answers" : "Hide answers"}
+      keys="A"
+      aria-pressed={answersHidden}
+      onClick={() => setAnswersHidden(!answersHidden)}
+    >
+      {answersHidden ? <EyeOff /> : <Eye />}
+    </IconButton>
+  );
+
   const gran = (
     <Segmented<Granularity>
       label="Step size"
@@ -429,11 +381,22 @@ export function Transport({ compact, present }: { compact?: boolean; present?: b
         data-tour="timeline"
       >
         <Scrubber />
-        <div className="mt-1 flex items-center justify-between gap-2">{buttons}</div>
+        <div className="mt-1 flex items-center justify-between gap-1">
+          {buttons}
+          {answersCtl}
+        </div>
         <div className="mt-1 flex items-center justify-between gap-2">
           {gran}
           {counterLine}
-          {speedCtl}
+          <Button
+            size="icon"
+            variant="outline"
+            className="readout w-11 text-sm"
+            aria-label={`Playback speed ${SPEEDS[speed]}×. Change speed`}
+            onClick={() => setSpeed(speed === SPEEDS.length - 1 ? 0 : speed + 1)}
+          >
+            {SPEEDS[speed]}×
+          </Button>
         </div>
       </div>
     );
@@ -457,6 +420,7 @@ export function Transport({ compact, present }: { compact?: boolean; present?: b
       <div className="flex items-center gap-4 pl-1">
         {counterLine}
         <div className="ml-auto flex items-center gap-3">
+          {answersCtl}
           {gran}
           {speedCtl}
         </div>

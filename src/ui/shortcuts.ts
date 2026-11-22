@@ -11,6 +11,7 @@ import { regenerate, suggestB } from "./lab/variants";
 
 export type ShortcutAction =
   | "palette"
+  | "answers"
   | "save"
   | "toggle"
   | "step+"
@@ -104,6 +105,7 @@ export function shortcutFor(
   if (k === "p") return "present";
   if (k === "h") return "hud";
   if (k === "b") return "bookmark";
+  if (k === "a") return "answers";
   const tools: Record<string, Tool> = {
     "1": "wall",
     "2": "weight",
@@ -180,6 +182,8 @@ function runShortcut(action: ShortcutAction) {
       return ui.setHud(!ui.hud);
     case "bookmark":
       return lab.toggleBookmark();
+    case "answers":
+      return ui.setAnswersHidden(!ui.answersHidden);
     default:
       if (action.startsWith("panel:")) return ui.togglePanel(action.slice(6) as PresentPanel);
       if (action.startsWith("tool:") && lab.exp.family === "grid")

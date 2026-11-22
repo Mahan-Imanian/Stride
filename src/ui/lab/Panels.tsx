@@ -1,3 +1,5 @@
+import { Button } from "../primitives";
+import { useUI } from "@/store/ui";
 import { useMemo } from "react";
 import { compareInsights, finalMetrics, type Run } from "@/core/experiment";
 import { DEPTH, getAlgo, type AlgoId } from "@/core/info";
@@ -55,7 +57,7 @@ export function AboutPanel({ algo }: { algo: AlgoId }) {
           </li>
         ))}
       </ul>
-      <p className="border-l-2 border-action pl-3 text-sm">{info.watch}</p>
+      <p className="rounded-md bg-hot-soft px-3 py-2 text-sm text-ink">{info.watch}</p>
       <div className="border-t border-rule">
         {(
           [
@@ -104,11 +106,22 @@ export function ComparePanel({ a, b, la, lb }: { a: Run; b: Run; la: string; lb:
   const ma = useMemo(() => finalMetrics(a), [a]);
   const mb = useMemo(() => finalMetrics(b), [b]);
   const insights = useMemo(() => compareInsights(a, b, la, lb), [a, b, la, lb]);
+  const hidden = useUI((s) => s.answersHidden);
+  const setHidden = useUI((s) => s.setAnswersHidden);
+  if (hidden)
+    return (
+      <div className="flex items-center gap-4 px-4 py-4">
+        <p className="text-md font-bold">Verdict hidden</p>
+        <Button className="ml-auto" onClick={() => setHidden(false)}>
+          Reveal
+        </Button>
+      </div>
+    );
   return (
     <div className="px-4 py-4">
-      <ul className="mb-4 space-y-2">
+      <ul className="mb-4 divide-y divide-rule border-y border-rule">
         {insights.map((t) => (
-          <li key={t} className="border-l-2 border-ink pl-3 text-sm">
+          <li key={t} className="py-2 text-md font-medium text-ink">
             {t}
           </li>
         ))}

@@ -239,6 +239,19 @@ export const Github = (p: P) => (
   </svg>
 );
 
+export const Eye = (p: P) => (
+  <Svg {...p}>
+    <path d="M1.5 8s2.4-4.5 6.5-4.5S14.5 8 14.5 8 12.1 12.5 8 12.5 1.5 8 1.5 8Z" />
+    <circle cx="8" cy="8" r="2" />
+  </Svg>
+);
+export const EyeOff = (p: P) => (
+  <Svg {...p}>
+    <path d="M2.5 5.5C1.9 6.5 1.5 8 1.5 8S4 12.5 8 12.5c1 0 1.9-.3 2.7-.7M5.3 3.9c.8-.3 1.7-.4 2.7-.4 4.1 0 6.5 4.5 6.5 4.5s-.5 1-1.4 2" />
+    <path d="m2.5 2.5 11 11" />
+  </Svg>
+);
+
 export function Mark({ size = 24 }: { size?: number }) {
   return (
     <svg

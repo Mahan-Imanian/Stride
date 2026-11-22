@@ -63,6 +63,7 @@ export interface View {
   terrain: HTMLCanvasElement | null;
   editing: boolean;
   values: boolean;
+  hidden: boolean;
   focus: number | null;
   reduced: boolean;
   algo: string;
@@ -284,9 +285,9 @@ export function paint(ctx: CanvasRenderingContext2D, v: View, snap: Snap, a: Ani
     if (v.values && s >= 22) paintValues(f);
     if (snap.current >= 0 && snap.pushedNow.length) paintEnqueued(f);
     if (focus !== null && snap.parent[focus] >= 0) paintParentTrail(f, focus);
-    if (paintPaths(f)) animating = true;
+    if (!v.hidden && paintPaths(f)) animating = true;
     paintCurrent(f);
-    if (!snap.diffStatus && s >= 14 && !v.values) paintRanks(f);
+    if (!snap.diffStatus && s >= 14 && !v.values && !v.hidden) paintRanks(f);
   }
   paintEndpoints(f);
   if (focus !== null) paintFocus(f, focus);
@@ -512,7 +513,7 @@ function paintCurrent({ ctx, snap, p, s, center }: Frame) {
 }
 
 function paintEndpoints({ ctx, v, snap, p, s, center }: Frame) {
-  const found = snap.outcome === "found" && !v.editing;
+  const found = snap.outcome === "found" && !v.editing && !v.hidden;
   const targetInk = found ? (snap.diffStatus ? p.a : p.path) : p.ink;
   if (s >= 16) {
     for (const [cell, letter, ink] of [

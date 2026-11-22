@@ -120,53 +120,75 @@ function GridState({ run, cursor }: { run: Extract<Run, { family: "grid" }>; cur
         />
       </Block>
       <Block title={title} meta={`${list.length} waiting`}>
-        <div className="readout grid grid-cols-[24px_minmax(0,1fr)_56px_48px_56px] text-2xs text-ink-3">
-          <span>#</span>
-          <span>cell</span>
-          <span className="text-right">
-            {run.algo === "bfs" || run.algo === "dfs" ? "moves" : "g"}
-          </span>
-          <span className="text-right">{showH ? "h" : ""}</span>
-          <span className="pr-1 text-right">
-            {kind === "pq" ? (run.algo === "astar" ? "f" : "key") : ""}
-          </span>
-        </div>
         <div
-          className="relative mt-1 overflow-hidden"
-          style={{ height: ROWS * ROW_H }}
-          role={shown.length ? "list" : undefined}
-          aria-label={shown.length ? `${title}, ${list.length} entries` : undefined}
+          role="table"
+          aria-label={`${title}, ${list.length} entries`}
+          aria-rowcount={list.length + 1}
         >
-          {list.length === 0 && (
-            <p className="absolute inset-x-0 top-0 text-sm text-ink-3">
-              {cursor === 0 ? "Empty until the search starts." : "Empty."}
-            </p>
-          )}
-          {shown.map((e, i) => {
-            const stale = kind === "pq" && (s.status[e.cell] === 2 || e.g > s.g[e.cell]);
-            const fresh = pushed.has(e.cell) && !stale;
-            return (
-              <div
-                key={e.seq}
-                role="listitem"
-                className={cn(
-                  "readout absolute inset-x-0 top-0 grid h-[22px] cursor-default grid-cols-[24px_minmax(0,1fr)_56px_48px_56px] items-center text-sm transition-transform duration-med ease-out",
-                  i === 0 && "bg-sunken",
-                  stale && "text-ink-3 line-through",
-                  fresh && "animate-entry-in text-hot-ink",
-                )}
-                style={{ transform: `translateY(${i * ROW_H}px)` }}
-                onMouseEnter={() => setFocus(e.cell)}
-                onMouseLeave={() => setFocus(null)}
-              >
-                <span className="pl-1 text-ink-3">{i === 0 ? "→" : i + 1}</span>
-                <span>{fmtCell(e.cell, w)}</span>
-                <span className="text-right">{e.g}</span>
-                <span className="text-right">{showH ? e.h : ""}</span>
-                <span className="pr-1 text-right">{kind === "pq" ? e.pri : ""}</span>
-              </div>
-            );
-          })}
+          <div
+            role="row"
+            className="readout grid grid-cols-[28px_minmax(0,1fr)_56px_48px_56px] text-2xs text-ink-3"
+          >
+            <span role="columnheader">#</span>
+            <span role="columnheader">Cell</span>
+            <span role="columnheader" className="text-right">
+              {run.algo === "bfs" || run.algo === "dfs" ? "Moves" : "g"}
+            </span>
+            <span role="columnheader" className="text-right">
+              {showH ? "h" : ""}
+            </span>
+            <span role="columnheader" className="pr-1 text-right">
+              {kind === "pq" ? (run.algo === "astar" ? "f" : "Key") : ""}
+            </span>
+          </div>
+          <div
+            className="relative mt-1 overflow-hidden"
+            style={{ height: ROWS * ROW_H }}
+            role="rowgroup"
+          >
+            {list.length === 0 && (
+              <p className="absolute inset-x-0 top-0 text-sm text-ink-3">
+                {cursor === 0 ? "Empty until the search starts." : "Empty."}
+              </p>
+            )}
+            {shown.map((e, i) => {
+              const stale = kind === "pq" && (s.status[e.cell] === 2 || e.g > s.g[e.cell]);
+              const fresh = pushed.has(e.cell) && !stale;
+              return (
+                <div
+                  key={e.seq}
+                  role="row"
+                  aria-rowindex={i + 2}
+                  className={cn(
+                    "readout absolute inset-x-0 top-0 grid h-[22px] cursor-default grid-cols-[28px_minmax(0,1fr)_56px_48px_56px] items-center rounded-sm text-sm transition-transform duration-med ease-out",
+                    i === 0 && !stale && "bg-hot-soft font-bold text-ink",
+                    stale && "text-ink-3 line-through",
+                    fresh && i !== 0 && "text-hot-ink",
+                  )}
+                  style={{ transform: `translateY(${i * ROW_H}px)` }}
+                  onMouseEnter={() => setFocus(e.cell)}
+                  onMouseLeave={() => setFocus(null)}
+                >
+                  <span role="cell" className="pl-1.5 text-ink-3">
+                    {i === 0 ? <span aria-label="Next out">→</span> : i + 1}
+                  </span>
+                  <span role="cell">
+                    {fmtCell(e.cell, w)}
+                    {stale && <span className="sr-only"> (stale)</span>}
+                  </span>
+                  <span role="cell" className="text-right">
+                    {e.g}
+                  </span>
+                  <span role="cell" className="text-right">
+                    {showH ? e.h : ""}
+                  </span>
+                  <span role="cell" className="pr-1 text-right">
+                    {kind === "pq" ? e.pri : ""}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
         <p className="mt-1 h-4 text-xs text-ink-3">
           {list.length > shown.length ? `+ ${list.length - shown.length} more` : ""}
@@ -249,10 +271,7 @@ function SortState({ run, cursor }: { run: Extract<Run, { family: "sort" }>; cur
               {s.stack.slice(-8).map((f, i, arr) => (
                 <li
                   key={`${f.lo}-${f.hi}-${i}`}
-                  className={cn(
-                    "animate-entry-in",
-                    i === arr.length - 1 ? "text-ink" : "text-ink-3",
-                  )}
+                  className={cn(i === arr.length - 1 ? "text-ink" : "text-ink-3")}
                   style={{ paddingLeft: Math.min(i, 6) * 10 }}
                 >
                   {run.algo === "quick" ? "quicksort" : "mergesort"}({f.lo}, {f.hi})
@@ -312,8 +331,8 @@ function SearchState({ run, cursor }: { run: Extract<Run, { family: "search" }>;
         />
         <div className="mt-3 h-1.5 w-full bg-sunken" aria-hidden="true">
           <div
-            className="h-full bg-ink transition-[width] duration-med ease-out"
-            style={{ width: `${(cand / n) * 100}%` }}
+            className="h-full origin-left bg-ink transition-transform duration-med ease-out"
+            style={{ transform: `scaleX(${cand / n})` }}
           />
         </div>
       </Block>

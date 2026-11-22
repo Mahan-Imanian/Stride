@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { Close } from "./icons";
 
 const buttonStyles = cva(
-  "inline-flex shrink-0 select-none items-center justify-center gap-1.5 whitespace-nowrap rounded font-medium transition-[background-color,color,border-color,transform] duration-fast ease-out active:scale-[.97] disabled:pointer-events-none disabled:opacity-40",
+  "inline-flex shrink-0 select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-md font-medium [&_svg]:shrink-0 transition-[background-color,color,border-color,transform] duration-fast ease-out active:scale-[.97] disabled:pointer-events-none disabled:opacity-40 [@media(pointer:coarse)]:min-h-11",
   {
     variants: {
       variant: {
@@ -20,11 +20,11 @@ const buttonStyles = cva(
         quiet: "text-ink-2 hover:text-ink",
       },
       size: {
-        sm: "h-7 px-2 text-xs",
-        md: "h-8 px-3 text-sm",
-        lg: "h-10 px-4 text-base",
-        icon: "h-8 w-8",
-        "icon-lg": "h-10 w-10",
+        sm: "h-8 px-2.5 text-xs",
+        md: "h-9 px-3.5 text-sm",
+        lg: "h-11 px-5 text-base",
+        icon: "h-9 w-9 [@media(pointer:coarse)]:min-w-11",
+        "icon-lg": "h-11 w-11",
       },
     },
     defaultVariants: { variant: "outline", size: "md" },
@@ -64,7 +64,7 @@ function Tip({
         <TooltipPrimitive.Content
           side={side}
           sideOffset={6}
-          className="z-50 flex items-center gap-2 rounded bg-ink px-2 py-1 text-xs text-surface data-[state=delayed-open]:animate-fade-in"
+          className="z-50 flex origin-[--radix-tooltip-content-transform-origin] items-center gap-2 rounded bg-ink px-2 py-1 text-xs text-surface data-[state=delayed-open]:animate-fade-in"
         >
           {label}
           {keys && (
@@ -123,7 +123,7 @@ export function Segmented<T extends string>({
       onValueChange={(v) => v && onChange(v as T)}
       aria-label={label}
       className={cn(
-        "inline-flex max-w-full rounded border border-rule-strong bg-sunken p-0.5",
+        "inline-flex max-w-full rounded-md border border-rule-strong bg-sunken p-0.5",
         className,
       )}
     >
@@ -136,7 +136,8 @@ export function Segmented<T extends string>({
           aria-label={typeof o.label === "string" ? undefined : o.title}
           className={cn(
             "inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 overflow-hidden whitespace-nowrap rounded-sm px-2.5 font-medium text-ink-2 transition-colors duration-fast hover:text-ink disabled:opacity-40 data-[state=on]:bg-surface data-[state=on]:text-ink data-[state=on]:shadow-inset",
-            size === "sm" ? "h-6 text-xs" : "h-7 text-sm",
+            size === "sm" ? "h-7 text-xs" : "h-8 text-sm",
+            "[@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:min-w-11",
           )}
         >
           {o.label}
@@ -275,7 +276,7 @@ export function MenuContent({
         sideOffset={6}
         collisionPadding={8}
         className={cn(
-          "z-50 min-w-[220px] max-w-[calc(100vw-16px)] rounded-md border border-rule-strong bg-surface p-1 shadow-pop data-[state=open]:animate-rise-in",
+          "z-50 min-w-[220px] max-w-[calc(100vw-16px)] origin-[--radix-dropdown-menu-content-transform-origin] rounded-md border border-rule-strong bg-surface p-1 shadow-pop data-[state=open]:animate-rise-in",
           className,
         )}
       >
@@ -343,6 +344,7 @@ export function Dialog({
   children,
   wide,
   footer,
+  instant = false,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
@@ -351,14 +353,21 @@ export function Dialog({
   children: React.ReactNode;
   wide?: boolean;
   footer?: React.ReactNode;
+  instant?: boolean;
 }) {
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-ink/30 data-[state=open]:animate-fade-in" />
+        <DialogPrimitive.Overlay
+          className={cn(
+            "fixed inset-0 z-40 bg-ink/30",
+            !instant && "data-[state=open]:animate-fade-in",
+          )}
+        />
         <DialogPrimitive.Content
           className={cn(
-            "fixed z-50 flex max-h-[calc(100dvh-32px)] flex-col overflow-hidden border border-rule-strong bg-surface shadow-pop data-[state=open]:animate-sheet-in",
+            "fixed z-50 flex max-h-[calc(100dvh-32px)] flex-col overflow-hidden border border-rule-strong bg-surface shadow-pop",
+            !instant && "data-[state=open]:animate-sheet-in",
             "inset-x-0 bottom-0 rounded-t-lg sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-[12vh] sm:-translate-x-1/2 sm:rounded-lg",
             wide ? "sm:w-[min(720px,calc(100vw-32px))]" : "sm:w-[min(460px,calc(100vw-32px))]",
           )}
@@ -366,9 +375,7 @@ export function Dialog({
         >
           <div className="flex items-start justify-between gap-4 border-b border-rule px-5 py-4">
             <div>
-              <DialogPrimitive.Title className="text-md font-semibold">
-                {title}
-              </DialogPrimitive.Title>
+              <DialogPrimitive.Title className="text-lg font-bold">{title}</DialogPrimitive.Title>
               {description && (
                 <DialogPrimitive.Description className="mt-0.5 text-sm text-ink-2">
                   {description}

@@ -16,6 +16,11 @@
 - k-means clusters use themed colours and a distinct marker shape each, replacing eight fixed colours that ignored the theme and paired red with green.
 - No canvas or SVG text is smaller than 12px. Legends show the same hatch, outline, line or dot as the canvas instead of flat squares.
 - Stepping backward animates each cell as the exact inverse of stepping forward.
+- The timeline is a phase rail split at the run's own milestones, replacing an unlabelled colour barcode. The readout says "Step 60 of 659" and names the next milestone.
+- Captions are never cut off. Each step adds an invariant line (what stays true), drafted for all 18 algorithms and marked with a dotted underline until approved.
+- Hide the answer (A, or the eye button): hides the narration, the path, the heap ranks and the Compare verdict while keeping the structure panels, for quizzes and lectures.
+- Heaps and queues are announced as tables. Buttons and toggles are at least 44px on touch screens. Keyboard-opened overlays appear instantly; menus open from their trigger.
+- No coloured left-border callouts remain; emphasis is a tint or weight.
 
 ### Changed
 

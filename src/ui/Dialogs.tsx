@@ -243,7 +243,7 @@ export function ImportDialog() {
           </div>
         </form>
         {error && (
-          <p role="alert" className="border-l-2 border-action pl-3 text-sm text-hot-ink">
+          <p role="alert" className="text-sm font-bold text-hot-ink">
             {error}
           </p>
         )}
@@ -271,6 +271,7 @@ const SHORTCUTS: [string, string[]][] = [
   ["Command palette", [`${MOD} K`, "/"]],
   ["Save experiment", [`${MOD} S`]],
   ["Bookmark the current step", ["B"]],
+  ["Hide or show the answers", ["A"]],
   ["Present full screen / exit", ["P", "Esc"]],
   ["In presentation: code, state, explanation, metrics", ["C", "S", "E", "M"]],
   ["Frame monitor", ["H"]],
@@ -282,7 +283,7 @@ export function ShortcutsDialog() {
   const close = useUI((s) => s.close);
   const singleKey = useSettings((s) => s.singleKey);
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && close()} title="Keyboard shortcuts" wide>
+    <Dialog open={open} onOpenChange={(o) => !o && close()} title="Keyboard shortcuts" wide instant>
       <table className="w-full text-sm">
         <tbody>
           {SHORTCUTS.map(([label, keys]) => (

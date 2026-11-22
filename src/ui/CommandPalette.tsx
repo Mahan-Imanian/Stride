@@ -12,9 +12,9 @@ export function CommandPalette() {
   return (
     <DialogPrimitive.Root open={open} onOpenChange={(o) => !o && close()}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-ink/25 data-[state=open]:animate-fade-in" />
+        <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-ink/25" />
         <DialogPrimitive.Content
-          className="fixed left-1/2 top-[10vh] z-50 flex max-h-[min(560px,80dvh)] w-[min(640px,calc(100vw-24px))] -translate-x-1/2 flex-col overflow-hidden rounded-lg border border-rule-strong bg-surface shadow-pop data-[state=open]:animate-rise-in"
+          className="fixed left-1/2 top-[10vh] z-50 flex max-h-[min(560px,80dvh)] w-[min(640px,calc(100vw-24px))] -translate-x-1/2 flex-col overflow-hidden rounded-lg border border-rule-strong bg-surface shadow-pop"
           aria-describedby={undefined}
         >
           <DialogPrimitive.Title className="sr-only">Command palette</DialogPrimitive.Title>

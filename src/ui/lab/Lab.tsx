@@ -6,7 +6,7 @@ import { useLab } from "@/store/lab";
 import { useUI } from "@/store/ui";
 import { Close, Warn } from "../icons";
 import { useCommitCounter } from "../perf";
-import { Button } from "../primitives";
+import { Button, IconButton } from "../primitives";
 import { Inspector } from "./Inspector";
 import { Present } from "./Present";
 import { Setup } from "./Setup";
@@ -17,12 +17,12 @@ import { useLabRoute } from "./useLabRoute";
 
 function StageColumn() {
   useCommitCounter("stage column");
-  const compare = useLab((s) => !!s.runB);
   return (
     <section
       className="grid min-h-0 min-w-0 bg-field"
       style={{
-        gridTemplateRows: `minmax(0,1fr) ${compare ? STAGE_ROWS_PX.captionCompare : STAGE_ROWS_PX.caption}px ${STAGE_ROWS_PX.legend}px ${STAGE_ROWS_PX.transport}px`,
+        gridTemplateColumns: "minmax(0,1fr)",
+        gridTemplateRows: `minmax(0,1fr) auto ${STAGE_ROWS_PX.legend}px ${STAGE_ROWS_PX.transport}px`,
       }}
       aria-label="Visualization"
     >
@@ -71,9 +71,9 @@ export function Lab({
       <Button size="sm" variant="ghost" onClick={() => navigate("/")}>
         Explore
       </Button>
-      <button aria-label="Dismiss" onClick={dismiss} className="text-ink-2 hover:text-ink">
+      <IconButton label="Dismiss" size="icon" onClick={dismiss} className="-my-1.5">
         <Close />
-      </button>
+      </IconButton>
     </div>
   );
 
