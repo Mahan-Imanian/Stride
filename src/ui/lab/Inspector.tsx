@@ -65,26 +65,30 @@ function InspectView() {
   const run = useLab((s) => (which === "b" && s.runB ? s.runB : s.runA));
   const cursor = usePresentedCursor(which);
   const [codeOpen, setCodeOpen] = useState(true);
+  const code = (
+    <section className="border-t border-rule" data-tour="code">
+      <button
+        className="flex w-full items-center justify-between px-4 pb-1 pt-3 text-left"
+        aria-expanded={codeOpen}
+        onClick={() => setCodeOpen((o) => !o)}
+      >
+        <h2 className="label">
+          Pseudocode <span className="font-medium text-ink-3">{getAlgo(run.algo).short}</span>
+        </h2>
+        <span className="text-2xs text-ink-3">{codeOpen ? "Hide" : "Show"}</span>
+      </button>
+      {codeOpen && (
+        <div className="pb-2 pr-1">
+          <CodePanel run={run} cursor={cursor} tone={which} />
+        </div>
+      )}
+    </section>
+  );
   return (
     <div>
       {hasB && <WhichToggle which={which} set={setWhich} />}
-      <section className="border-b border-rule" data-tour="code">
-        <button
-          className="flex w-full items-center justify-between px-4 pb-1 pt-3 text-left"
-          aria-expanded={codeOpen}
-          onClick={() => setCodeOpen((o) => !o)}
-        >
-          <h2 className="label">Pseudocode · {getAlgo(run.algo).short}</h2>
-          <span className="text-2xs text-ink-3">{codeOpen ? "hide" : "show"}</span>
-        </button>
-        {codeOpen && (
-          <div className="pb-2 pr-1">
-            <CodePanel run={run} cursor={cursor} tone={which} />
-          </div>
-        )}
-      </section>
       <div data-tour="state">
-        <StatePanel run={run} cursor={cursor} />
+        <StatePanel run={run} cursor={cursor} beforeTotals={code} />
       </div>
     </div>
   );

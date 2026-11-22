@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { createContext, useContext, type ReactNode } from "react";
 import type { Run } from "@/core/experiment";
 import { frontierKind } from "@/core/grid/algorithms";
 import { orderedFrontier } from "@/core/grid/machine";
@@ -52,7 +52,8 @@ function Block({
   meta?: ReactNode;
   children: ReactNode;
 }) {
-  return (
+  const slot = useContext(SlotBeforeTotals);
+  const block = (
     <div className="border-t border-rule px-4 py-3 first:border-t-0">
       <div className="mb-2 flex items-baseline justify-between gap-2">
         <h3 className="label">{title}</h3>
@@ -61,9 +62,37 @@ function Block({
       {children}
     </div>
   );
+  return title === "Totals" && slot ? (
+    <>
+      {slot}
+      {block}
+    </>
+  ) : (
+    block
+  );
 }
 
-export function StatePanel({ run, cursor }: { run: Run; cursor: number }) {
+const SlotBeforeTotals = createContext<ReactNode>(null);
+const HAS_TOTALS = new Set(["grid", "sort", "graph"]);
+
+export function StatePanel({
+  run,
+  cursor,
+  beforeTotals,
+}: {
+  run: Run;
+  cursor: number;
+  beforeTotals?: ReactNode;
+}) {
+  return (
+    <SlotBeforeTotals.Provider value={beforeTotals}>
+      <FamilyState run={run} cursor={cursor} />
+      {!HAS_TOTALS.has(run.family) && beforeTotals}
+    </SlotBeforeTotals.Provider>
+  );
+}
+
+function FamilyState({ run, cursor }: { run: Run; cursor: number }) {
   switch (run.family) {
     case "grid":
       return <GridState run={run} cursor={cursor} />;

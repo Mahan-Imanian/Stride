@@ -173,33 +173,23 @@ function PaneHeader({
   );
 }
 
-function OverlayLegend() {
-  const items: [SwatchKind, string][] = [
-    ["run-a", "only A"],
-    ["run-b", "only B"],
-    ["both", "both"],
-    ["path-a", "A path"],
-    ["path-b", "B path"],
-  ];
-  return (
-    <ul
-      className="flex h-7 shrink-0 items-center gap-x-4 overflow-hidden whitespace-nowrap border-t border-rule bg-surface px-3 text-xs text-ink-2"
-      aria-label="Comparison legend"
-    >
-      {items.map(([k, l]) => (
-        <li key={l} className="flex items-center gap-1.5">
-          <Swatch kind={k} />
-          {l}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-export function Legend() {
+export function Legend({ narrow = false }: { narrow?: boolean }) {
   const exp = useLab((s) => s.exp);
-  const items: [SwatchKind, string][] =
-    exp.family === "grid"
+  const overlay = useLab(
+    (s) => (s.exp.view.overlay || narrow) && s.exp.family === "grid" && !!s.runB,
+  );
+  const items: [SwatchKind, string][] = overlay
+    ? [
+        ["run-a", "only A"],
+        ["run-b", "only B"],
+        ["both", "both"],
+        ["path-a", "A path"],
+        ["path-b", "B path"],
+        ["current", "current"],
+        ["wall", "wall"],
+        ["cost", "mud"],
+      ]
+    : exp.family === "grid"
       ? [
           ["pending", "frontier"],
           ["done", "expanded"],
@@ -328,7 +318,6 @@ function Pane({
       >
         <Visual run={run} which={which} diff={diff} />
       </div>
-      {overlay && <OverlayLegend />}
     </section>
   );
 }

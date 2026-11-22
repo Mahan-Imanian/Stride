@@ -143,10 +143,11 @@ export function Header({ route }: { route: "explore" | "lab" | "saved" }) {
             !narrow && "ml-3 border-l border-rule pl-3",
           )}
         >
-          {layout === "medium" && (
-            <IconButton label="Setup" variant="outline" onClick={() => setSetupOpen(true)}>
+          {!narrow && (
+            <Button variant="outline" onClick={() => setSetupOpen(true)} data-tour="setup">
               <PanelLeft />
-            </IconButton>
+              Setup
+            </Button>
           )}
           <AlgoSwitcher />
           {!narrow && (

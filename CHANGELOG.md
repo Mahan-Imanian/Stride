@@ -21,6 +21,10 @@
 - Hide the answer (A, or the eye button): hides the narration, the path, the heap ranks and the Compare verdict while keeping the structure panels, for quizzes and lectures.
 - Heaps and queues are announced as tables. Buttons and toggles are at least 44px on touch screens. Keyboard-opened overlays appear instantly; menus open from their trigger.
 - No coloured left-border callouts remain; emphasis is a tint or weight.
+- The lab opens on the experiment's question as its title, with the canvas and the structure beside it. Setup moves into a drawer at every width, giving the canvas 272px more. Share links keep the experiment (`x=`), so students see the question too.
+- When a comparison finishes, its result appears under the question. Arrows step through all 14 experiments.
+- In the Inspector, the structure comes first, then the pseudocode, then the totals. Comparisons show one legend instead of two.
+- Explore groups the experiments by family, each row led by its question, instead of a grid of identical cards. Open the lab is the primary action.
 
 ### Changed
 

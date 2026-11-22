@@ -12,27 +12,23 @@ import { ChevronRight, Github, Link, Trash } from "./icons";
 import { Button, IconButton } from "./primitives";
 import { Thumb } from "./Thumb";
 import { TagAB } from "./lab/Panels";
+import { Swatch } from "./lab/Swatch";
 
-function ScenarioTile({ s, compact }: { s: Scenario; compact: boolean }) {
+function ScenarioRow({ s, compact }: { s: Scenario; compact: boolean }) {
   const build = useCallback(() => s.build(compact), [s, compact]);
   const exp = build();
   return (
-    <li>
+    <li className="border-t border-rule">
       <a
         href={`#/lab?s=${s.id}`}
-        className="group flex h-full flex-col border border-rule bg-surface transition-colors duration-fast hover:border-ink"
+        className="group grid grid-cols-[minmax(0,1fr)_112px] items-start gap-4 py-4 sm:grid-cols-[minmax(0,1fr)_160px]"
       >
-        <Thumb
-          build={build}
-          label={`Preview of ${s.title}`}
-          className="aspect-[16/9] w-full border-b border-rule"
-        />
-        <div className="flex flex-1 flex-col gap-1.5 p-3">
-          <h3 className="text-sm font-semibold leading-5 group-hover:underline group-hover:underline-offset-4">
-            {s.title}
-          </h3>
-          <p className="text-sm text-ink-2">{s.question}</p>
-          <p className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 text-xs text-ink-3">
+        <div className="min-w-0">
+          <h4 className="text-lg font-bold leading-snug text-ink group-hover:underline group-hover:underline-offset-4">
+            {s.question}
+          </h4>
+          <p className="mt-1 text-sm text-ink-2">{s.title}</p>
+          <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-3">
             {exp.b ? (
               <>
                 <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
@@ -49,10 +45,17 @@ function ScenarioTile({ s, compact }: { s: Scenario; compact: boolean }) {
             )}
           </p>
         </div>
+        <Thumb
+          build={build}
+          label={`Preview of ${s.title}`}
+          className="aspect-[16/10] w-full rounded-md border border-rule"
+        />
       </a>
     </li>
   );
 }
+
+const familyOf = (s: Scenario, compact: boolean) => s.build(compact).family;
 
 export function Explore() {
   const compact = useIsCompact();
@@ -63,8 +66,7 @@ export function Explore() {
     <div className="mx-auto max-w-[1240px] px-4 pb-16 sm:px-6">
       <section className="grid gap-8 border-b border-rule py-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] md:items-center md:py-14">
         <div>
-          <p className="label mb-3">Algorithm lab</p>
-          <h1 className="text-2xl font-semibold sm:text-3xl">
+          <h1 className="text-2xl font-bold sm:text-3xl">
             Run an algorithm one step at a time, with its queue, heap or call stack beside it.
           </h1>
           <p className="mt-4 max-w-[52ch] text-md text-ink-2">
@@ -73,11 +75,11 @@ export function Explore() {
             comparison, and a link reopens the exact setup.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
-            <Button variant="primary" size="lg" onClick={startTour}>
-              Take the 6-step tour
-            </Button>
-            <Button variant="outline" size="lg" onClick={() => navigate("/lab")}>
+            <Button variant="primary" size="lg" onClick={() => navigate("/lab")}>
               Open the lab
+            </Button>
+            <Button variant="outline" size="lg" onClick={startTour}>
+              Take the 6-step tour
             </Button>
           </div>
           {last && (
@@ -98,13 +100,14 @@ export function Explore() {
           />
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-rule px-3 py-2 text-xs text-ink-2">
             <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 bg-enc-done" /> both expanded
+              <Swatch kind="both" /> both expanded
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 bg-enc-a/45" /> only Dijkstra
+              <Swatch kind="run-a" /> only Dijkstra
             </span>
-            <span className="ml-auto text-ink group-hover:underline group-hover:underline-offset-4">
-              Open A* vs Dijkstra →
+            <span className="ml-auto inline-flex items-center gap-1 font-bold text-ink group-hover:underline group-hover:underline-offset-4">
+              Open A* vs Dijkstra
+              <ChevronRight />
             </span>
           </div>
         </a>
@@ -119,11 +122,25 @@ export function Explore() {
             Each one is a question with a prepared input. Open it, press Run.
           </p>
         </div>
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {SCENARIOS.map((s) => (
-            <ScenarioTile key={s.id} s={s} compact={compact} />
-          ))}
-        </ul>
+        <div className="grid gap-x-12 gap-y-8 lg:grid-cols-2">
+          {FAMILIES.map((fam) => {
+            const list = SCENARIOS.filter((s) => familyOf(s, compact) === fam.id);
+            if (!list.length) return null;
+            return (
+              <section key={fam.id} aria-labelledby={`fam-${fam.id}`}>
+                <h3 id={`fam-${fam.id}`} className="text-md font-bold">
+                  {fam.name}
+                </h3>
+                <p className="mb-2 text-sm text-ink-3">{fam.blurb}</p>
+                <ul className="border-b border-rule">
+                  {list.map((s) => (
+                    <ScenarioRow key={s.id} s={s} compact={compact} />
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
       </section>
 
       <section className="border-t border-rule py-10" aria-labelledby="algo-title">
@@ -277,7 +294,7 @@ export function Saved() {
   const items = useLibrary((s) => s.items);
   return (
     <div className="mx-auto max-w-[880px] px-4 py-10 sm:px-6">
-      <h1 className="text-2xl font-semibold">Saved experiments</h1>
+      <h1 className="text-2xl font-bold">Saved experiments</h1>
       <p className="mt-2 text-md text-ink-2">
         Stored in this browser only. Use a share link to move one to another device.
       </p>
@@ -285,9 +302,9 @@ export function Saved() {
         {items.length ? (
           <SavedList items={items} />
         ) : (
-          <div className="border border-dashed border-rule-strong px-6 py-10 text-center">
-            <p className="text-md font-medium">Nothing saved yet</p>
-            <p className="mx-auto mt-1 max-w-[46ch] text-sm text-ink-2">
+          <div className="rounded-lg bg-sunken px-6 py-8">
+            <p className="text-lg font-bold">Nothing saved yet</p>
+            <p className="mt-1 max-w-[60ch] text-md text-ink-2">
               In the lab, press Save or {navigator.platform.includes("Mac") ? "⌘S" : "Ctrl S"} to
               keep an experiment here with its input, settings and comparison.
             </p>

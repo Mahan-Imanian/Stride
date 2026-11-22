@@ -37,7 +37,8 @@ export function ShareDialog() {
   const cursor = useLab((s) => s.cursorA);
   const [atStep, setAtStep] = useState(false);
   const [copied, setCopied] = useState(false);
-  const url = `${appBaseUrl()}#/lab?e=${encode(exp, atStep ? cursor : 0)}`;
+  const scenario = useUI((s) => s.scenario);
+  const url = `${appBaseUrl()}#/lab?e=${encode(exp, atStep ? cursor : 0)}${scenario ? `&x=${scenario}` : ""}`;
   useEffect(() => setCopied(false), [url, open]);
   const canShare = typeof navigator !== "undefined" && "share" in navigator;
   const seed = "seed" in exp.input ? exp.input.seed : 0;

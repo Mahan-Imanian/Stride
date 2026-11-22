@@ -89,6 +89,7 @@ describe("lab", () => {
     Object.defineProperty(window, "innerWidth", { value: 1440, configurable: true });
     render(<App />);
     await go("/lab?s=lr-too-high");
+    fireEvent.click(screen.getByRole("button", { name: "Setup" }));
     const sliders = screen.getAllByRole("slider");
     expect(sliders.length).toBeGreaterThan(3);
     for (const s of sliders) expect(s).toHaveAccessibleName();
@@ -103,6 +104,14 @@ describe("lab", () => {
     fireEvent.mouseDown(screen.getByRole("tab", { name: "About" }));
     expect(screen.getAllByRole("tabpanel")).toHaveLength(1);
     expect(screen.getByRole("tabpanel")).toHaveTextContent(/Complexity/);
+  });
+
+  it("keeps the experiment question when opened from a share link", async () => {
+    render(<App />);
+    const s = SCENARIOS.find((x) => x.id === "astar-vs-dijkstra")!;
+    await go(`/lab?e=${encode(s.build(false))}&x=${s.id}`);
+    expect(screen.getByRole("heading", { level: 1, name: s.title })).toBeInTheDocument();
+    expect(screen.getByText(s.question)).toBeInTheDocument();
   });
 
   it("compares two algorithms with a verdict, not just two canvases", async () => {

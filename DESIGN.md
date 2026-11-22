@@ -4,7 +4,7 @@ The system of record for how Stride looks, moves and reads. Code and this file c
 
 Each section states the user intent, the rules, and how the rule is verified. Rules marked **must** are enforced by a test or a script; the rest are reviewed by eye at the gates.
 
-Status: **foundations, canvas and components** (tokens, type, encoding grammar, motion tokens, canvas rendering for all five families, the component layer). Views, responsive layout, motion, accessibility, presentation mode, export and repo presentation are added gate by gate.
+Status: **foundations, canvas, components and views** (tokens, type, encoding grammar, motion tokens, canvas rendering for all five families, the component layer, the Lab, Explore and Saved compositions). Responsive layout, motion, accessibility, presentation mode, export and repo presentation are added gate by gate.
 
 ## World
 
@@ -157,6 +157,42 @@ Cell transitions are symmetric, so stepping back reads as the exact inverse of s
 - Loading: the lab chunk's fallback appears only after 300ms, so a fast load never flashes a loader.
 - Error: an unhandled error shows the message, says saved experiments are safe, and offers Back to Explore. A malformed share link loads a default experiment under an alert banner with a 36px dismiss button.
 - Errors are bold `hot-ink` text with `role="alert"`; no coloured rules.
+
+## Views
+
+### Lab (desktop, 1024px and wider)
+
+```
+┌ header: wordmark · nav · [Setup] [family / algorithm ▾] [Compare] ……… Search · Save · Share · More ┐
+├ experiment bar: question as h1 (28px) · question line (16px) · Result when finished ·  ‹ 2 of 14 › ┤
+├ board 1: run metrics strip                                    │ board 2 (380px, 440px from 1600px) │
+│          canvas (the figure)                                  │  Inspect · Compare · Log · About  │
+│          one legend                                           │  run toggle (comparisons)         │
+│          narration: A │ B   (what happened, why, invariant,   │  structure: Now, heap or queue    │
+│                       next)                                   │  pseudocode                       │
+│          transport: buttons · phase rail · readout            │  totals                           │
+└──────────────────────────────────────────────────────────────┴───────────────────────────────────┘
+```
+
+- The setup column is gone. Setup opens as a drawer from the header's labelled Setup button at every desktop width, so the canvas gains 272px and the first thing on screen is the question, the board and the structure, not 31 editing controls.
+- **Experiment bar.** For a prepared experiment the `h1` is its title and the line under it is its question (the existing copy in `scenarios.ts`). For an ad-hoc run it is the algorithm's name and its one-line summary, or "A vs B" in a comparison. When a comparison reaches its end, a Result line shows the engine's first comparison insight; it is hidden while answers are hidden. Previous and next arrows step through the 14 experiments in order.
+- The experiment id travels in the URL as `x=` next to `e=`, so a share link opened by a student still shows the question. Links without `x=` open exactly as before.
+- **Board 2 order.** The structure the algorithm decides from comes first, then the pseudocode, then the totals (the pseudocode is slotted in before the Totals block in every family).
+- **One legend.** In an overlay comparison the legend lists only A, only B, both, the two paths, current, wall and mud; frontier and expanded are not drawn there, so they are not listed.
+
+### Lab (phone and side panel, under 1024px)
+
+Experiment bar (22px title), canvas, narration, legend, then the Inspector inline with Setup as its first tab; the transport is fixed to the bottom edge with the safe-area inset.
+
+### Explore
+
+- Hero: the existing headline and paragraph without an eyebrow; "Open the lab" is the primary action and the tour is secondary; the hero figure's legend uses drawn swatches.
+- **Experiments are the front door, grouped by family** (Pathfinding, Sorting, Searching, Spanning trees, Learning, with each family's existing blurb). Each experiment is a row, not a card: the question is the 18px bold headline, the title and the algorithms (with A and B tags) sit under it, and a thumbnail of the finished run sits at the right. Rows are separated by hairlines; two family columns from 1024px.
+- The algorithm reference table follows, unchanged in content.
+
+### Saved
+
+A bold `h1`, the browser-only storage note, then the list; the empty state is a sunken panel aligned to the reading edge with one action, Open the lab.
 
 ## Type
 

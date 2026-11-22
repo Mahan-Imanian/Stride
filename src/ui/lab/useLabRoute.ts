@@ -1,3 +1,4 @@
+import { useUI } from "@/store/ui";
 import { useEffect, useRef, useState } from "react";
 import { defaultExperiment, variantLabel } from "@/core/experiment";
 import { isAlgoId } from "@/core/info";
@@ -20,10 +21,12 @@ export function useLabRoute(query: URLSearchParams) {
     const e = q.get("e");
     const s = q.get("s");
     const algo = q.get("algo");
+    const x = q.get("x");
     if (e) {
       if (e === lastWritten.current) return;
       const r = decode(e);
       if (r.ok) {
+        useUI.getState().setScenario(x && getScenario(x) ? x : null);
         useLab.getState().load(r.exp, r.cursor);
         setError(null);
       } else {
@@ -33,6 +36,7 @@ export function useLabRoute(query: URLSearchParams) {
       return;
     }
     setError(null);
+    useUI.getState().setScenario(s && getScenario(s) ? s : null);
     if (s && getScenario(s)) useLab.getState().load(getScenario(s)!.build(compact));
     else if (algo && isAlgoId(algo)) useLab.getState().load(defaultExperiment(algo, { compact }));
     else if (!useLab.getState().revision)
@@ -47,7 +51,8 @@ export function useLabRoute(query: URLSearchParams) {
       t = window.setTimeout(() => {
         const code = encode(st.exp);
         lastWritten.current = code;
-        replaceHash(`/lab?e=${code}`);
+        const scen = useUI.getState().scenario;
+        replaceHash(`/lab?e=${code}${scen ? `&x=${scen}` : ""}`);
         useLibrary
           .getState()
           .remember(

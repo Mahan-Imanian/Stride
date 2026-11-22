@@ -11,6 +11,7 @@ interface UIStore {
   panels: Record<PresentPanel, boolean>;
   hud: boolean;
   answersHidden: boolean;
+  scenario: string | null;
   open(d: DialogId): void;
   close(): void;
   setSetupOpen(o: boolean): void;
@@ -19,6 +20,7 @@ interface UIStore {
   togglePanel(p: PresentPanel): void;
   setHud(on: boolean): void;
   setAnswersHidden(on: boolean): void;
+  setScenario(id: string | null): void;
 }
 
 export const useUI = create<UIStore>((set, get) => ({
@@ -29,6 +31,7 @@ export const useUI = create<UIStore>((set, get) => ({
   panels: { code: true, state: true, explain: true, metrics: true },
   hud: false,
   answersHidden: false,
+  scenario: null,
   open: (dialog) => set({ dialog }),
   close: () => set({ dialog: null }),
   setSetupOpen: (setupOpen) => set({ setupOpen }),
@@ -37,4 +40,5 @@ export const useUI = create<UIStore>((set, get) => ({
   togglePanel: (p) => set({ panels: { ...get().panels, [p]: !get().panels[p] } }),
   setHud: (hud) => set({ hud }),
   setAnswersHidden: (answersHidden) => set({ answersHidden }),
+  setScenario: (scenario) => set({ scenario }),
 }));
