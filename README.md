@@ -57,6 +57,14 @@ In _Bad starting centroids_, k-means++ settles at inertia 1.657 after 2 iteratio
 
 <img alt="k-means++ and corner-started k-means side by side on four blobs: Voronoi regions, final centroids, and the Compare panel with inertia 1.657 against 7.718" src=".github/assets/f-kmeans.png" width="100%">
 
+### Built to be read from the back of a room
+
+The lab is being redesigned for lectures. Each experiment opens with its question as the page title, and the verdict appears under it when the run ends. The board uses a charcoal blackboard theme and a whiteboard light theme, set in Atkinson Hyperlegible.
+
+On the canvas, state is shown by pattern as well as colour, so it survives a washed-out projector and colour blindness: hatching for settled cells, an outline for cells waiting in the frontier, a ringed solid for the current one and a haloed line for the result. In a comparison, run A hatches one way and run B the other. The transport has a phase rail, so you can jump to where a run starts settling or finds its path, and <kbd>A</kbd> hides counts and verdicts so a class can predict before they see the answer. Short invariants under the caption are drafts for now.
+
+The screenshots on this page are from before the redesign and will be replaced.
+
 ### Presentation mode and share links
 
 Press <kbd>P</kbd> for presentation mode: full screen, large type, and toggles for code, state, explanation and metrics. Every experiment is a link: input, seed, settings and optionally the current step are encoded in the URL, and JSON export uses the same format.
