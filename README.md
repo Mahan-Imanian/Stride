@@ -4,7 +4,7 @@ An algorithm lab for lectures and self-study. Stride records every operation of 
 
 **[Open the lab](https://mahan-imanian.github.io/Stride/)** · [Quick start](#quick-start) · [Algorithms](#algorithms) · [How it works](#how-it-works) · [Internals](docs/internals.md)
 
-<a href="https://mahan-imanian.github.io/Stride/"><img alt="The lab 160 steps into A* vs Dijkstra on the blackboard theme: the question as the title, Dijkstra's settled cells hatched one way and A*'s the other, both captions with their invariants, Dijkstra's min-heap and pseudocode, and the phase rail under the scrubber" src=".github/assets/showcase.png" width="100%"></a>
+<a href="https://mahan-imanian.github.io/Stride/"><img alt="Five Stride experiments on the blackboard theme. The largest: Dijkstra and A* on one grid, both finding a path of cost 46, with Dijkstra expanding 658 cells and A* 295. Beside it, BFS flooding a maze, quicksort on sorted input with a last-element pivot (496 comparisons against 103 with median-of-3), Prim building a spanning tree (both trees weigh 307), and k-means started from a corner (inertia 7.718 against 1.657 for k-means++). Each is titled with its question." src=".github/assets/hero.jpg" width="100%"></a>
 
 ## What you can do
 
