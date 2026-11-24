@@ -337,15 +337,20 @@ export function NowCaption({ large = false, flow = false }: { large?: boolean; f
     <div
       className={cn(
         "relative shrink-0 border-t border-rule bg-surface [contain:layout_paint]",
+        !flow && "overflow-hidden",
         b && (flow ? "divide-y divide-rule" : "grid grid-cols-2 divide-x divide-rule"),
       )}
-      style={{
-        minHeight: large
-          ? PRESENT_ROWS_PX.caption
-          : b
-            ? STAGE_ROWS_PX.captionCompare
-            : STAGE_ROWS_PX.caption,
-      }}
+      style={
+        flow
+          ? undefined
+          : {
+              height: large
+                ? PRESENT_ROWS_PX.caption
+                : b
+                  ? STAGE_ROWS_PX.captionCompare
+                  : STAGE_ROWS_PX.caption,
+            }
+      }
       data-tour="now"
     >
       {editing ? (
@@ -370,6 +375,7 @@ export function NowCaption({ large = false, flow = false }: { large?: boolean; f
             tag={runB ? "a" : undefined}
             algo={getAlgo(runA.algo).short}
             large={large}
+            clip={!flow}
             invariant={INVARIANTS[runA.algo]}
           />
           {b && runB && (
@@ -378,6 +384,7 @@ export function NowCaption({ large = false, flow = false }: { large?: boolean; f
               tag="b"
               algo={getAlgo(runB.algo).short}
               large={large}
+              clip={!flow}
               invariant={runB.algo !== runA.algo ? INVARIANTS[runB.algo] : undefined}
             />
           )}
@@ -396,30 +403,40 @@ function Line({
   algo,
   large,
   invariant,
+  clip,
 }: {
   e: ReturnType<typeof explain>;
   tag?: "a" | "b";
   algo: string;
   large: boolean;
   invariant?: string;
+  clip: boolean;
 }) {
   return (
     <div className="flex min-w-0 gap-3 px-4 py-3">
       {tag && <TagAB which={tag} className="mt-0.5 shrink-0" />}
       <div className="min-w-0 flex-1">
-        <p className={cn("font-bold text-ink", large ? "text-xl" : "text-md")}>
+        <p className={cn(clip && "truncate", "font-bold text-ink", large ? "text-xl" : "text-md")}>
           {!tag && <span className="mr-2 font-medium text-ink-3">{algo}</span>}
           {e.now}
         </p>
-        <p className={cn("mt-1 text-ink-2", large ? "text-lg" : "text-sm")}>{e.why}</p>
+        <p
+          className={cn("mt-1 text-ink-2", clip && "line-clamp-2", large ? "text-lg" : "text-sm")}
+          title={e.why}
+        >
+          {e.why}
+        </p>
         {invariant && (
-          <p className={cn("mt-1.5 text-ink-2", large ? "text-md" : "text-xs")}>
+          <p
+            className={cn("mt-1.5 text-ink-2", clip && "truncate", large ? "text-md" : "text-xs")}
+            title={invariant}
+          >
             <span className="mr-1.5 font-bold text-ink">Invariant</span>
             <span className={cn(!INVARIANTS_APPROVED && "ph")}>{invariant}</span>
           </p>
         )}
         {e.next && (
-          <p className={cn("mt-1.5 text-ink-3", large ? "text-md" : "text-xs")}>
+          <p className={cn("mt-1.5 text-ink-3", clip && "truncate", large ? "text-md" : "text-xs")}>
             <span className="mr-1.5 font-bold text-ink-2">Next</span>
             {e.next}
           </p>
