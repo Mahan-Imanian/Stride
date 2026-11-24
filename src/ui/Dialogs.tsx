@@ -287,22 +287,29 @@ export function ShortcutsDialog() {
   const singleKey = useSettings((s) => s.singleKey);
   return (
     <Dialog open={open} onOpenChange={(o) => !o && close()} title="Keyboard shortcuts" wide instant>
-      <table className="w-full text-sm">
-        <tbody>
-          {SHORTCUTS.map(([label, keys]) => (
-            <tr key={label} className="border-t border-rule first:border-t-0">
-              <td className="py-1.5 pr-4">{label}</td>
-              <td className="py-1.5 text-right">
-                <span className="inline-flex flex-wrap justify-end gap-1">
-                  {keys.map((k) => (
-                    <Kbd key={k}>{k}</Kbd>
-                  ))}
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="grid gap-x-8 sm:grid-cols-2">
+        {[
+          SHORTCUTS.slice(0, Math.ceil(SHORTCUTS.length / 2)),
+          SHORTCUTS.slice(Math.ceil(SHORTCUTS.length / 2)),
+        ].map((half, h) => (
+          <table key={h} className="w-full text-sm">
+            <tbody>
+              {half.map(([label, keys]) => (
+                <tr key={label} className="border-t border-rule first:border-t-0">
+                  <td className="py-1.5 pr-4">{label}</td>
+                  <td className="py-1.5 text-right">
+                    <span className="inline-flex justify-end gap-1 whitespace-nowrap">
+                      {keys.map((k) => (
+                        <Kbd key={k}>{k}</Kbd>
+                      ))}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ))}
+      </div>
       <div className="mt-4 border-t border-rule pt-3 text-sm text-ink-2">
         <p className="mb-2 font-medium text-ink">On the grid</p>
         <p>

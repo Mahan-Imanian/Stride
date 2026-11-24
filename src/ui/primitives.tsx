@@ -368,8 +368,8 @@ export function Dialog({
           className={cn(
             "fixed z-50 flex max-h-[calc(100dvh-32px)] flex-col overflow-hidden border border-rule-strong bg-surface shadow-pop",
             !instant && "data-[state=open]:animate-sheet-in",
-            "inset-x-0 bottom-0 rounded-t-lg sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-[12vh] sm:-translate-x-1/2 sm:rounded-lg",
-            wide ? "sm:w-[min(720px,calc(100vw-32px))]" : "sm:w-[min(460px,calc(100vw-32px))]",
+            "inset-x-0 bottom-0 rounded-t-lg sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-[8dvh] sm:max-h-[calc(84dvh)] sm:-translate-x-1/2 sm:rounded-lg",
+            wide ? "sm:w-[min(880px,calc(100vw-32px))]" : "sm:w-[min(460px,calc(100vw-32px))]",
           )}
           {...(description ? {} : { "aria-describedby": undefined })}
         >
