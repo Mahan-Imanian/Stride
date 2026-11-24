@@ -139,7 +139,8 @@ Cell transitions are symmetric, so stepping back reads as the exact inverse of s
 
 ### Narration (`NowCaption`, `Line`)
 
-- The caption grows to fit; nothing is clamped or cut with an ellipsis. The stage grid gives it an `auto` row with the old fixed height as its minimum, and an explicit `minmax(0,1fr)` column so long text wraps instead of widening the stage.
+- The caption has a fixed height (136px; 172px in presentation mode) and never resizes the board. What happened and what happens next are one line each, the reason is at most two lines and the invariant one; anything longer ends in an ellipsis and the full text is in the element title. Professors reported the old growing caption as the board jumping and lagging during playback: it moved the canvas by up to 92px.
+- The Explanation toggle hides the caption row entirely, which gives its 136px to the board. The caption stays mounted inside a zero-height row, so the screen-reader live region keeps announcing steps.
 - Each run's caption has four parts, in order: what happened (bold, 16px; 22px in presentation mode), why it was allowed, the **invariant** (what stays true at every step), and what happens next.
 - Invariants live in `src/core/invariants.ts`, one per algorithm. Until they are approved they render with a dotted underline (`.ph`), the same mark used for any copy awaiting approval.
 
@@ -147,6 +148,14 @@ Cell transitions are symmetric, so stepping back reads as the exact inverse of s
 
 - Heaps and queues are real tables (`table`, `row`, `columnheader`, `cell`) so screen readers announce row and column. Rows keep their identity and move to their new rank by transform; the row that leaves next is tinted `hot-soft` and bold; stale heap entries are struck through and announced as stale; a row that just entered is coloured `hot-ink` with no entrance animation.
 - The highlighted pseudocode line is a full-width `hot-soft` tint (run B: cyan at 15%) with bold text, never a coloured left border.
+
+### Board toolbar (`src/ui/lab/StageToolbar.tsx`)
+
+A 48px toolbar sits directly above the board, so editing the input never means opening Setup. Pathfinding shows Draw: Wall, Mud, Erase, Start, Target (keys 1 to 5), Clear, and New layout. Spanning trees show Edit: Move, Edge, Node, Delete, and New graph. The other families show New data. Every tool is a labelled button; the labels drop to icons only when the board column is narrower than 660px, and each keeps its name for screen readers and a title with its key. The same toolbar appears in presentation mode.
+
+### View controls (`ViewControls`)
+
+The experiment bar ends with three labelled controls: Explanation (E) and Side panel (I), which show their state with a filled or empty dot as well as the pressed fill, and Present (P), the primary button. Turning both toggles off is the large-board mode for a lecture hall without going full screen: at 1440×900 the board grows from 463px to 599px tall and spans the full width.
 
 ### Hide the answer
 
@@ -164,7 +173,8 @@ Cell transitions are symmetric, so stepping back reads as the exact inverse of s
 
 ```
 ┌ header: wordmark · nav · [Setup] [family / algorithm ▾] [Compare] ……… Search · Save · Share · More ┐
-├ experiment bar: question as h1 (28px) · question line (16px) · Result when finished ·  ‹ 2 of 14 › ┤
+├ experiment bar: h1 (28px) · Result chip · question line · [Explanation] [Side panel] [Present] ‹ 2 of 14 › ┤
+├ toolbar: Draw: [Wall] [Mud] [Erase] [Start] [Target] · Clear · New layout                          │
 ├ board 1: run metrics strip                                    │ board 2 (380px, 440px from 1600px) │
 │          canvas (the figure)                                  │  Inspect · Compare · Log · About  │
 │          one legend                                           │  run toggle (comparisons)         │
@@ -175,7 +185,7 @@ Cell transitions are symmetric, so stepping back reads as the exact inverse of s
 ```
 
 - The setup column is gone. Setup opens as a drawer from the header's labelled Setup button at every desktop width, so the canvas gains 272px and the first thing on screen is the question, the board and the structure, not 31 editing controls.
-- **Experiment bar.** For a prepared experiment the `h1` is its title and the line under it is its question (the existing copy in `scenarios.ts`). For an ad-hoc run it is the algorithm's name and its one-line summary, or "A vs B" in a comparison. When a comparison reaches its end, a Result line shows the engine's first comparison insight; it is hidden while answers are hidden. Previous and next arrows step through the 14 experiments in order.
+- **Experiment bar.** For a prepared experiment the `h1` is its title and the line under it is its question (the existing copy in `scenarios.ts`). For an ad-hoc run it is the algorithm's name and its one-line summary, or "A vs B" in a comparison. When a comparison reaches its end, a Result chip on the title row shows the engine's first comparison insight; it is hidden while answers are hidden. It shares the title row and both lines truncate, so the bar has one height in every state and the board never moves when the result appears. Previous and next arrows step through the 14 experiments in order.
 - The experiment id travels in the URL as `x=` next to `e=`, so a share link opened by a student still shows the question. Links without `x=` open exactly as before.
 - **Board 2 order.** The structure the algorithm decides from comes first, then the pseudocode, then the totals (the pseudocode is slotted in before the Totals block in every family).
 - **One legend.** In an overlay comparison the legend lists only A, only B, both, the two paths, current, wall and mud; frontier and expanded are not drawn there, so they are not listed.

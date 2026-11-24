@@ -37,8 +37,12 @@ In _Bad starting centroids_, k-means++ settles at inertia 1.657 after 2 iteratio
 - **Readable from the back of the room.** A charcoal blackboard theme and a whiteboard light theme, set in Atkinson Hyperlegible. State on the board is shown by pattern as well as colour (hatching for settled, an outline for waiting, a ringed solid for the current cell, a haloed line for the result), so it holds up on a washed-out projector and for colour-blind students.
 - **Phase rail.** Marks under the scrubber show where a run reaches a milestone, such as the target being discovered, and the status line names the next one.
 - **Hide the answers.** <kbd>A</kbd> hides the captions and the result so the class can predict the next step, then reveal it. The counts in the run strip stay visible for now.
-- **Presentation mode.** <kbd>P</kbd> goes full screen with large type and toggles for code, state, explanation and metrics.
+- **Edit the board while you teach.** A toolbar above the board draws walls and mud, erases, moves the start and target, clears the grid or makes a new layout (keys 1 to 5 for the tools). Graphs get Move, Edge, Node and Delete. It stays available in presentation mode.
+- **Make the board bigger.** The Explanation (<kbd>E</kbd>) and Side panel (<kbd>I</kbd>) buttons hide those parts, so the board takes the full width and about 30% more height. The board keeps its size and position while a run plays.
+- **Presentation mode.** The Present button or <kbd>P</kbd> goes full screen with large type and toggles for code, state, explanation and metrics.
 - **Share links.** Input, seed, settings, the experiment and optionally the current step are encoded in the URL, and JSON export uses the same format.
+
+<img alt="BFS in a maze with the explanation and side panel hidden: the toolbar with labelled Wall, Mud, Erase, Start, Target, Clear and New layout buttons above a board that fills the width, and the Explanation, Side panel and Present buttons in the header" src=".github/assets/f-focus.png" width="100%">
 
 <img alt="Answers hidden at the end of A* vs Dijkstra: the captions are replaced by Predict the next step, then reveal it, and a Reveal button" src=".github/assets/f-hidden.png" width="100%">
 

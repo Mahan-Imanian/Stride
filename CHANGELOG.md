@@ -17,16 +17,20 @@
 - No canvas or SVG text is smaller than 12px. Legends show the same hatch, outline, line or dot as the canvas instead of flat squares.
 - Stepping backward animates each cell as the exact inverse of stepping forward.
 - The timeline is a phase rail split at the run's own milestones, replacing an unlabelled colour barcode. The readout says "Step 60 of 659" and names the next milestone.
-- Captions are never cut off. Each step adds an invariant line (what stays true), drafted for all 18 algorithms and marked with a dotted underline until approved.
+- Each step adds an invariant line (what stays true), drafted for all 18 algorithms and marked with a dotted underline until approved.
 - Hide the answer (A, or the eye button): hides the narration, the path, the heap ranks and the Compare verdict while keeping the structure panels, for quizzes and lectures.
 - Heaps and queues are announced as tables. Buttons and toggles are at least 44px on touch screens. Keyboard-opened overlays appear instantly; menus open from their trigger.
 - No coloured left-border callouts remain; emphasis is a tint or weight.
 - The lab opens on the experiment's question as its title, with the canvas and the structure beside it. Setup moves into a drawer at every width, giving the canvas 272px more. Share links keep the experiment (`x=`), so students see the question too.
 - When a comparison finishes, its result appears under the question. Arrows step through all 14 experiments.
 - In the Inspector, the structure comes first, then the pseudocode, then the totals. Comparisons show one legend instead of two.
+- A labelled toolbar above the board holds the editing tools that used to sit in the Setup drawer: Wall, Mud, Erase, Start, Target, Clear and New layout on pathfinding grids, Move, Edge, Node and Delete on graphs, and New data elsewhere. It also appears in presentation mode.
+- The experiment bar has labelled Explanation (E), Side panel (I) and Present (P) controls. Hiding the explanation and the side panel makes the board about 30% taller and full width without going full screen.
 - Explore groups the experiments by family, each row led by its question, instead of a grid of identical cards. Open the lab is the primary action.
 
 ### Changed
+
+- Captions have a fixed height again and long lines end in an ellipsis, with the full text on hover. Growing captions and the result line appearing used to move and resize the board by up to 92px during playback; it now stays put.
 
 - Renamed from Algoscope to Stride. The repository moved from `Mahan-Imanian/ML-Algorithm-Visualizer` to `Mahan-Imanian/stride` (GitHub redirects the old repository URL).
 - The site moved from `https://mahan-imanian.github.io/ML-Algorithm-Visualizer/` to `https://mahan-imanian.github.io/stride/`. The old address now returns 404; links shared from it still open through **Import experiment**.
