@@ -140,7 +140,7 @@ Cell transitions are symmetric, so stepping back reads as the exact inverse of s
 ### Narration (`NowCaption`, `Line`)
 
 - The caption has a fixed height (136px; 172px in presentation mode) and never resizes the board. What happened and what happens next are one line each, the reason is at most two lines and the invariant one; anything longer ends in an ellipsis and the full text is in the element title. Professors reported the old growing caption as the board jumping and lagging during playback: it moved the canvas by up to 92px.
-- The Explanation toggle hides the caption row entirely, which gives its 136px to the board. The caption stays mounted inside a zero-height row, so the screen-reader live region keeps announcing steps.
+- The caption sits in a panel with its own header bar (30px): "Explanation", then Minimize and Close controls at the right. Minimized, only the bar stays and it shows the current step in one line; closed, the row is gone and its space goes to the board. Double-clicking the bar toggles minimize. The caption stays mounted in every state, so the screen-reader live region keeps announcing steps.
 - Each run's caption has four parts, in order: what happened (bold, 16px; 22px in presentation mode), why it was allowed, the **invariant** (what stays true at every step), and what happens next.
 - Invariants live in `src/core/invariants.ts`, one per algorithm. Until they are approved they render with a dotted underline (`.ph`), the same mark used for any copy awaiting approval.
 
@@ -153,9 +153,15 @@ Cell transitions are symmetric, so stepping back reads as the exact inverse of s
 
 A 48px toolbar sits directly above the board, so editing the input never means opening Setup. Pathfinding shows Draw: Wall, Mud, Erase, Start, Target (keys 1 to 5), Clear, and New layout. Spanning trees show Edit: Move, Edge, Node, Delete, and New graph. The other families show New data. Every tool is a labelled button; the labels drop to icons only when the board column is narrower than 660px, and each keeps its name for screen readers and a title with its key. The same toolbar appears in presentation mode.
 
-### View controls (`ViewControls`)
+### Panels and workspaces (`src/ui/lab/Panes.tsx`)
 
-The experiment bar ends with three labelled controls: Explanation (E) and Side panel (I), which show their state with a filled or empty dot as well as the pressed fill, and Present (P), the primary button. Turning both toggles off is the large-board mode for a lecture hall without going full screen: at 1440×900 the board grows from 463px to 599px tall and spans the full width.
+Panels follow the conventions of a desktop editor's docked panels, so hiding and restoring them works the way people already expect:
+
+- **Panel controls.** The explanation's header bar has Minimize (−, which becomes + when minimized) and Close (×). The side panel's tab row ends with Collapse to icons (») and Close. The board toolbar ends with Close. Controls are 24px squares in `ink-3` that darken on hover, each with a tooltip and an accessible name such as "Close side panel".
+- **Icon strip.** A collapsed side panel becomes a 48px strip: Expand («) at the top, then one icon per tab (Inspect, Compare, Log, About). Clicking an icon reopens the panel on that tab.
+- **Window menu.** A Window menu in the header lists every panel with a check mark (Toolbar, Explanation, Legend, Side panel) and its key, the three workspaces, Reset workspace and Present full screen. Anything closed from its own controls comes back from here.
+- **Workspaces.** Essentials has every panel open. Lecture keeps the toolbar and legend, minimizes the explanation and collapses the side panel to icons. Board only leaves the board, the run strip and the transport. The arrangement is saved in local storage (`stride.workspace.v1`) and restored on the next visit. At 1440×900 the board is 433px tall in Essentials, 569px in Lecture and 675px in Board only.
+- The experiment bar keeps one view control, Present (P), as its primary button.
 
 ### Hide the answer
 
@@ -173,7 +179,8 @@ The experiment bar ends with three labelled controls: Explanation (E) and Side p
 
 ```
 ┌ header: wordmark · nav · [Setup] [family / algorithm ▾] [Compare] ……… Search · Save · Share · More ┐
-├ experiment bar: h1 (28px) · Result chip · question line · [Explanation] [Side panel] [Present] ‹ 2 of 14 › ┤
+├ header: … [Setup] [family / algorithm ▾] [Window ▾] [Compare] ……………………………………………………………… ┤
+├ experiment bar: h1 (28px) · Result chip · question line ……………………………… [Present] ‹ 2 of 14 › ┤
 ├ toolbar: Draw: [Wall] [Mud] [Erase] [Start] [Target] · Clear · New layout                          │
 ├ board 1: run metrics strip                                    │ board 2 (380px, 440px from 1600px) │
 │          canvas (the figure)                                  │  Inspect · Compare · Log · About  │

@@ -25,7 +25,8 @@
 - When a comparison finishes, its result appears under the question. Arrows step through all 14 experiments.
 - In the Inspector, the structure comes first, then the pseudocode, then the totals. Comparisons show one legend instead of two.
 - A labelled toolbar above the board holds the editing tools that used to sit in the Setup drawer: Wall, Mud, Erase, Start, Target, Clear and New layout on pathfinding grids, Move, Edge, Node and Delete on graphs, and New data elsewhere. It also appears in presentation mode.
-- The experiment bar has labelled Explanation (E), Side panel (I) and Present (P) controls. Hiding the explanation and the side panel makes the board about 30% taller and full width without going full screen.
+- Panels can be minimized, collapsed or closed from their own header controls, as in a desktop editor: the explanation minimizes to a one-line bar, the side panel collapses to a strip of icons that reopen it on a tab, and the toolbar closes. A Window menu in the header brings any panel back and switches between three workspaces (Essentials, Lecture, Board only). The arrangement is remembered between visits.
+- The keyboard shortcuts dialog no longer runs off the bottom of the screen; it fits the window and lists the shortcuts in two columns.
 - Explore groups the experiments by family, each row led by its question, instead of a grid of identical cards. Open the lab is the primary action.
 
 ### Changed
