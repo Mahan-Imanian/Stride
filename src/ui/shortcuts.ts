@@ -188,8 +188,10 @@ function runShortcut(action: ShortcutAction) {
     case "answers":
       return ui.setAnswersHidden(!ui.answersHidden);
     case "side":
-      return ui.setSide(!ui.side);
+      return ui.setPane("side", ui.workspace.side === "open" ? "closed" : "open");
     default:
+      if (action === "panel:explain" && !ui.present)
+        return ui.setPane("explain", ui.workspace.explain === "closed" ? "open" : "closed");
       if (action.startsWith("panel:")) return ui.togglePanel(action.slice(6) as PresentPanel);
       if (action.startsWith("tool:") && lab.exp.family === "grid")
         lab.setTool(action.slice(5) as Tool);

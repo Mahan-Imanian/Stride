@@ -24,6 +24,7 @@ import {
   Upload,
 } from "./icons";
 import { suggestB } from "./lab/variants";
+import { WindowMenu } from "./lab/Panes";
 import {
   Button,
   IconButton,
@@ -150,6 +151,7 @@ export function Header({ route }: { route: "explore" | "lab" | "saved" }) {
             </Button>
           )}
           <AlgoSwitcher />
+          {!narrow && <WindowMenu />}
           {!narrow && (
             <Button
               variant={hasB ? "primary" : "outline"}

@@ -7,6 +7,10 @@ import { Close, Warn } from "../icons";
 import { useCommitCounter } from "../perf";
 import { Button, IconButton } from "../primitives";
 import { Inspector } from "./Inspector";
+import { PANE_BAR_PX, PaneBar, SideControls, SideIcons } from "./Panes";
+import { explain } from "./explain";
+import { usePresented } from "../clock";
+import { useMemo } from "react";
 import { Present } from "./Present";
 import { Setup } from "./Setup";
 import { ExperimentBar } from "./ExperimentBar";
@@ -16,30 +20,62 @@ import { Transport } from "./Transport";
 import { usePlaybackDriver } from "./playback";
 import { useLabRoute } from "./useLabRoute";
 
+/** One line of the current step, shown in the explanation bar while it is minimized. */
+function ExplainSummary() {
+  const runA = useLab((s) => s.runA);
+  const { a } = usePresented();
+  const hidden = useUI((s) => s.answersHidden);
+  const now = useMemo(() => explain(runA, a).now, [runA, a]);
+  return <>{hidden ? "Answers hidden" : now}</>;
+}
+
 function StageColumn() {
   useCommitCounter("stage column");
-  const explain = useUI((s) => s.panels.explain);
+  const w = useUI((s) => s.workspace);
+  const setPane = useUI((s) => s.setPane);
   const compare = useLab((s) => !!s.runB);
-  const caption = explain ? (compare ? STAGE_ROWS_PX.captionCompare : STAGE_ROWS_PX.caption) : 0;
+  const captionPx = compare ? STAGE_ROWS_PX.captionCompare : STAGE_ROWS_PX.caption;
+  const explainPx =
+    w.explain === "open" ? PANE_BAR_PX + captionPx : w.explain === "min" ? PANE_BAR_PX : 0;
   return (
     <section
       className="grid min-h-0 min-w-0 bg-field"
       style={{
         gridTemplateColumns: "minmax(0,1fr)",
-        gridTemplateRows: `${TOOLBAR_PX}px minmax(0,1fr) ${caption}px ${STAGE_ROWS_PX.legend}px ${STAGE_ROWS_PX.transport}px`,
+        gridTemplateRows: [
+          `${w.toolbar ? TOOLBAR_PX : 0}px`,
+          "minmax(0,1fr)",
+          `${explainPx}px`,
+          `${w.legend ? STAGE_ROWS_PX.legend : 0}px`,
+          `${STAGE_ROWS_PX.transport}px`,
+        ].join(" "),
       }}
       aria-label="Visualization"
     >
-      <StageToolbar />
+      <div className="min-h-0 overflow-hidden">{w.toolbar && <StageToolbar />}</div>
       <div className="min-h-0 min-w-0 [contain:strict]">
         <Stage />
       </div>
-      {/* Hidden captions stay mounted so screen readers still hear each step. */}
-      <div className="min-h-0 overflow-hidden">
+      {/* A closed or minimized caption stays mounted so screen readers still hear each step. */}
+      <div className="flex min-h-0 flex-col overflow-hidden">
+        {w.explain !== "closed" && (
+          <PaneBar
+            title="Explanation"
+            minimized={w.explain === "min"}
+            onToggleMin={() => setPane("explain", w.explain === "min" ? "open" : "min")}
+            onClose={() => setPane("explain", "closed")}
+          >
+            {w.explain === "min" && <ExplainSummary />}
+          </PaneBar>
+        )}
         <NowCaption />
       </div>
-      <div className="h-7 overflow-hidden border-t border-rule bg-surface px-4">
-        <Legend />
+      <div className="min-h-0 overflow-hidden">
+        {w.legend && (
+          <div className="h-7 overflow-hidden border-t border-rule bg-surface px-4">
+            <Legend />
+          </div>
+        )}
       </div>
       <Transport />
     </section>
@@ -58,7 +94,7 @@ export function Lab({
   const layout = useLayout();
   const compact = useIsCompact();
   const present = useUI((s) => s.present);
-  const side = useUI((s) => s.side);
+  const side = useUI((s) => s.workspace.side);
   const [error, dismiss] = useLabRoute(query);
   usePlaybackDriver();
   const gridAspect = useLab((s) =>
@@ -118,11 +154,13 @@ export function Lab({
       <ExperimentBar />
       <div
         className={
-          !side
+          side === "closed"
             ? "grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)]"
-            : layout === "wide"
-              ? "grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_440px]"
-              : "grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_340px]"
+            : side === "min"
+              ? "grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_48px]"
+              : layout === "wide"
+                ? "grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_440px]"
+                : "grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_340px]"
         }
       >
         {
@@ -149,11 +187,12 @@ export function Lab({
           </DialogPrimitive.Root>
         }
         <StageColumn />
-        {side && (
+        {side === "open" && (
           <aside className="min-h-0 border-l border-rule bg-surface" aria-label="Inspector">
-            <Inspector />
+            <Inspector controls={<SideControls />} />
           </aside>
         )}
+        {side === "min" && <SideIcons />}
       </div>
     </div>
   );

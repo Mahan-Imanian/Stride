@@ -22,8 +22,9 @@ beforeEach(() => {
     dialog: null,
     tour: null,
     setupOpen: false,
-    side: true,
     panels: { code: true, state: true, explain: true, metrics: true },
+    workspace: { toolbar: true, legend: true, explain: "open", side: "open" },
+    inspectorTab: "inspect",
   });
   window.location.hash = "";
 });
@@ -123,17 +124,42 @@ describe("lab", () => {
     expect(within(tools).getByRole("button", { name: "Clear walls and mud" })).toBeInTheDocument();
   });
 
-  it("hides the side panel and the explanation to give the board more room", async () => {
+  it("minimizes and closes panels from their own controls", async () => {
     render(<App />);
     await go("/lab?s=bfs-maze");
-    expect(screen.getByRole("complementary", { name: "Inspector" })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /Side panel/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Minimize explanation" }));
+    expect(useUI.getState().workspace.explain).toBe("min");
+    fireEvent.click(screen.getByRole("button", { name: "Expand explanation" }));
+    fireEvent.click(screen.getByRole("button", { name: "Close explanation" }));
+    expect(useUI.getState().workspace.explain).toBe("closed");
+    expect(screen.queryByRole("button", { name: "Close explanation" })).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Collapse side panel to icons" }));
     expect(screen.queryByRole("complementary", { name: "Inspector" })).toBeNull();
-    const explanation = screen.getByRole("button", { name: /Explanation/ });
-    expect(explanation).toHaveAttribute("aria-pressed", "true");
-    fireEvent.click(explanation);
-    expect(explanation).toHaveAttribute("aria-pressed", "false");
-    expect(useUI.getState().panels.explain).toBe(false);
+    const strip = screen.getByRole("navigation", { name: "Side panel, collapsed" });
+    fireEvent.click(within(strip).getByRole("button", { name: "About" }));
+    expect(screen.getByRole("complementary", { name: "Inspector" })).toBeInTheDocument();
+    expect(screen.getByRole("tabpanel")).toHaveTextContent(/Complexity/);
+
+    fireEvent.click(screen.getByRole("button", { name: "Close toolbar" }));
+    expect(screen.queryByRole("toolbar", { name: "Board tools" })).toBeNull();
+  });
+
+  it("restores every panel from the Window menu and remembers the workspace", async () => {
+    render(<App />);
+    await go("/lab?s=bfs-maze");
+    act(() => useUI.getState().applyWorkspace("board"));
+    expect(screen.queryByRole("complementary", { name: "Inspector" })).toBeNull();
+    expect(JSON.parse(localStorage.getItem("stride.workspace.v1")!).side).toBe("closed");
+    fireEvent.keyDown(screen.getByRole("button", { name: /Window/ }), { key: "Enter" });
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Reset workspace" }));
+    expect(useUI.getState().workspace).toEqual({
+      toolbar: true,
+      legend: true,
+      explain: "open",
+      side: "open",
+    });
+    expect(screen.getByRole("complementary", { name: "Inspector" })).toBeInTheDocument();
   });
 
   it("gives the caption a fixed height so playback never resizes the board", async () => {

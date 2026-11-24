@@ -4,6 +4,7 @@ import { variantLabel } from "@/core/experiment";
 import { getAlgo } from "@/core/info";
 import { cn } from "@/lib/utils";
 import { useLab } from "@/store/lab";
+import { useUI, type InspectorTab } from "@/store/ui";
 import { usePresentedCursor } from "../clock";
 import { useCommitCounter } from "../perf";
 import { Segmented } from "../primitives";
@@ -126,15 +127,24 @@ function CompareView() {
   );
 }
 
-export function Inspector({ inline, withSetup }: { inline?: boolean; withSetup?: boolean }) {
+export function Inspector({
+  inline,
+  withSetup,
+  controls,
+}: {
+  inline?: boolean;
+  withSetup?: boolean;
+  controls?: React.ReactNode;
+}) {
   const hasB = useLab((s) => !!s.runB);
   const algo = useLab((s) => s.exp.a.algo);
-  const [tab, setTab] = useState("inspect");
-  const current = !hasB && tab === "compare" ? "inspect" : tab;
+  const tab = useUI((s) => s.inspectorTab);
+  const setTab = useUI((s) => s.setInspectorTab);
+  const current = (!hasB && tab === "compare") || (!withSetup && tab === "setup") ? "inspect" : tab;
   return (
     <Tabs.Root
       value={current}
-      onValueChange={setTab}
+      onValueChange={(v) => setTab(v as InspectorTab)}
       className={cn("flex min-h-0 flex-col", !inline && "h-full")}
     >
       <Tabs.List
@@ -163,6 +173,7 @@ export function Inspector({ inline, withSetup }: { inline?: boolean; withSetup?:
         <Tabs.Trigger value="about" className={tabClass}>
           About
         </Tabs.Trigger>
+        {controls}
       </Tabs.List>
       <div className={cn("relative min-h-0", !inline && "flex-1 overflow-y-auto")} data-scroll>
         {withSetup && (

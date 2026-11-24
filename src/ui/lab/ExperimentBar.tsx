@@ -7,7 +7,7 @@ import { position, totalLength, useLab } from "@/store/lab";
 import { useUI } from "@/store/ui";
 import { ChevronRight } from "../icons";
 import { IconButton } from "../primitives";
-import { ViewControls } from "./StageToolbar";
+import { PresentButton } from "./Panes";
 
 export function ExperimentBar({ compact = false }: { compact?: boolean }) {
   const scenarioId = useUI((s) => s.scenario);
@@ -84,7 +84,7 @@ export function ExperimentBar({ compact = false }: { compact?: boolean }) {
         </p>
         {compact && resultLine}
       </div>
-      {!compact && <ViewControls />}
+      {!compact && <PresentButton />}
       {matches && (
         <nav aria-label="Experiments" className="flex shrink-0 items-center gap-1">
           <IconButton label="Previous experiment" onClick={() => go(-1)}>

@@ -214,6 +214,27 @@ export const PanelRight = (p: P) => (
     <path d="M2 3h12v10H2zM10 3v10" />
   </Svg>
 );
+export const ChevronsRight = (p: P) => (
+  <Svg {...p}>
+    <path d="M4 4l4 4-4 4M8.5 4l4 4-4 4" />
+  </Svg>
+);
+export const ChevronsLeft = (p: P) => (
+  <Svg {...p}>
+    <path d="M12 4L8 8l4 4M7.5 4l-4 4 4 4" />
+  </Svg>
+);
+export const Info = (p: P) => (
+  <Svg {...p}>
+    <circle cx="8" cy="8" r="5.75" />
+    <path d="M8 7.25v4M8 4.75v.5" />
+  </Svg>
+);
+export const List = (p: P) => (
+  <Svg {...p}>
+    <path d="M5.5 4.5h8M5.5 8h8M5.5 11.5h8M2.5 4.5h.5M2.5 8h.5M2.5 11.5h.5" />
+  </Svg>
+);
 export const Captions = (p: P) => (
   <Svg {...p}>
     <path d="M2 3h12v10H2zM4.5 7.5h7M4.5 10h4.5" />

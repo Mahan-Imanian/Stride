@@ -4,20 +4,9 @@ import { cn } from "@/lib/utils";
 import { useLab, type GraphTool, type Tool } from "@/store/lab";
 import { useUI } from "@/store/ui";
 import { useElementSize } from "../hooks";
-import {
-  Captions,
-  Dice,
-  Erase,
-  Fullscreen,
-  PanelRight,
-  StartPin,
-  TargetPin,
-  Trash,
-  Wall,
-  Weight,
-} from "../icons";
-import { enterPresentation } from "../presentation";
-import { Button, Kbd } from "../primitives";
+import { Close, Dice, Erase, StartPin, TargetPin, Trash, Wall, Weight } from "../icons";
+import { Button } from "../primitives";
+import { PaneButton } from "./Panes";
 import { regenerate } from "./variants";
 
 export const TOOLBAR_PX = 48;
@@ -93,82 +82,6 @@ function ToolButton({
   );
 }
 
-function ViewToggle({
-  on,
-  onClick,
-  label,
-  keyName,
-  icon,
-  showLabel,
-}: {
-  on: boolean;
-  onClick: () => void;
-  label: string;
-  keyName: string;
-  icon: React.ReactNode;
-  showLabel: boolean;
-}) {
-  return (
-    <Button
-      size="md"
-      variant="outline"
-      aria-pressed={on}
-      aria-label={showLabel ? undefined : label}
-      title={`${on ? "Hide" : "Show"} ${label.toLowerCase()} (${keyName})`}
-      onClick={onClick}
-      className={cn(on && "border-ink bg-sunken text-ink")}
-    >
-      {icon}
-      {showLabel && label}
-      <span
-        aria-hidden="true"
-        className={cn(
-          "ml-0.5 h-2 w-2 rounded-full border border-current",
-          on ? "bg-current" : "bg-transparent",
-        )}
-      />
-    </Button>
-  );
-}
-
-/** View controls for the board: captions, the side panel and presentation mode. */
-export function ViewControls() {
-  const explain = useUI((s) => s.panels.explain);
-  const togglePanel = useUI((s) => s.togglePanel);
-  const side = useUI((s) => s.side);
-  const setSide = useUI((s) => s.setSide);
-  return (
-    <div className="flex shrink-0 items-center gap-1.5" role="group" aria-label="View">
-      <ViewToggle
-        on={explain}
-        onClick={() => togglePanel("explain")}
-        label="Explanation"
-        keyName="E"
-        icon={<Captions />}
-        showLabel
-      />
-      <ViewToggle
-        on={side}
-        onClick={() => setSide(!side)}
-        label="Side panel"
-        keyName="I"
-        icon={<PanelRight />}
-        showLabel
-      />
-      <Button
-        size="md"
-        variant="primary"
-        onClick={enterPresentation}
-        title="Full screen with large type (P)"
-      >
-        <Fullscreen />
-        Present
-        <Kbd className="ml-1 border-action-on/40 bg-transparent text-action-on">P</Kbd>
-      </Button>
-    </div>
-  );
-}
-
 /** The always-visible editing controls above the board. */
 export function StageToolbar() {
   const [box, size] = useElementSize<HTMLDivElement>();
@@ -178,6 +91,7 @@ export function StageToolbar() {
   const graphTool = useLab((s) => s.graphTool);
   const setGraphTool = useLab((s) => s.setGraphTool);
   const update = useLab((s) => s.update);
+  const setPane = useUI((s) => s.setPane);
   const toolLabels = (size.w || 1200) >= 660;
 
   const clear = () =>
@@ -268,6 +182,11 @@ export function StageToolbar() {
         <Dice />
         {(toolLabels || family !== "grid") && fresh}
       </Button>
+      <div className="ml-auto shrink-0">
+        <PaneButton label="Close toolbar" onClick={() => setPane("toolbar", false)}>
+          <Close size={14} />
+        </PaneButton>
+      </div>
     </div>
   );
 }

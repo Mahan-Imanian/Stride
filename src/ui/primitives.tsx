@@ -7,7 +7,7 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { Close } from "./icons";
+import { Check, Close } from "./icons";
 
 const buttonStyles = cva(
   "inline-flex shrink-0 select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-md font-medium [&_svg]:shrink-0 transition-[background-color,color,border-color,transform] duration-fast ease-out active:scale-[.97] disabled:pointer-events-none disabled:opacity-40 [@media(pointer:coarse)]:min-h-11",
@@ -305,6 +305,33 @@ export function MenuItem({
       {children}
       {keys && <span className="readout ml-auto pl-4 text-2xs text-ink-3">{keys}</span>}
     </Menu.Item>
+  );
+}
+
+export function MenuCheckItem({
+  checked,
+  onCheckedChange,
+  children,
+  keys,
+}: {
+  checked: boolean;
+  onCheckedChange: (on: boolean) => void;
+  children: React.ReactNode;
+  keys?: string;
+}) {
+  return (
+    <Menu.CheckboxItem
+      checked={checked}
+      onCheckedChange={onCheckedChange}
+      onSelect={(e) => e.preventDefault()}
+      className={cn(itemClass, "pl-8")}
+    >
+      <Menu.ItemIndicator className="absolute left-2.5">
+        <Check />
+      </Menu.ItemIndicator>
+      {children}
+      {keys && <span className="readout ml-auto pl-4 text-2xs text-ink-3">{keys}</span>}
+    </Menu.CheckboxItem>
   );
 }
 
