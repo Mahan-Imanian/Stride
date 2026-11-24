@@ -18,7 +18,13 @@ async function go(hash: string) {
 
 beforeEach(() => {
   localStorage.clear();
-  useUI.setState({ dialog: null, tour: null, setupOpen: false });
+  useUI.setState({
+    dialog: null,
+    tour: null,
+    setupOpen: false,
+    side: true,
+    panels: { code: true, state: true, explain: true, metrics: true },
+  });
   window.location.hash = "";
 });
 afterEach(cleanup);
@@ -104,6 +110,38 @@ describe("lab", () => {
     fireEvent.mouseDown(screen.getByRole("tab", { name: "About" }));
     expect(screen.getAllByRole("tabpanel")).toHaveLength(1);
     expect(screen.getByRole("tabpanel")).toHaveTextContent(/Complexity/);
+  });
+
+  it("puts labelled drawing tools above the board, outside Setup", async () => {
+    render(<App />);
+    await go("/lab?s=bfs-maze");
+    const tools = screen.getByRole("toolbar", { name: "Board tools" });
+    const mud = within(tools).getByRole("radio", { name: "Mud" });
+    fireEvent.click(mud);
+    expect(useLab.getState().tool).toBe("weight");
+    expect(mud).toHaveAttribute("aria-checked", "true");
+    expect(within(tools).getByRole("button", { name: "Clear walls and mud" })).toBeInTheDocument();
+  });
+
+  it("hides the side panel and the explanation to give the board more room", async () => {
+    render(<App />);
+    await go("/lab?s=bfs-maze");
+    expect(screen.getByRole("complementary", { name: "Inspector" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Side panel/ }));
+    expect(screen.queryByRole("complementary", { name: "Inspector" })).toBeNull();
+    const explanation = screen.getByRole("button", { name: /Explanation/ });
+    expect(explanation).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(explanation);
+    expect(explanation).toHaveAttribute("aria-pressed", "false");
+    expect(useUI.getState().panels.explain).toBe(false);
+  });
+
+  it("gives the caption a fixed height so playback never resizes the board", async () => {
+    render(<App />);
+    await go("/lab?s=astar-vs-dijkstra");
+    const caption = document.querySelector("[data-tour=now]") as HTMLElement;
+    expect(caption.style.height).toBe("136px");
+    expect(caption.style.minHeight).toBe("");
   });
 
   it("keeps the experiment question when opened from a share link", async () => {

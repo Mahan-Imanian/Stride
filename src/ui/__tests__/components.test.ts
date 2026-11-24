@@ -33,6 +33,17 @@ describe("invariants", () => {
   });
 });
 
+describe("view shortcuts", () => {
+  it("maps E to the explanation and I to the side panel in the lab", () => {
+    const key = (k: string) => new KeyboardEvent("keydown", { key: k });
+    expect(shortcutFor(key("e"), { inLab: true, singleKey: true, present: false })).toBe(
+      "panel:explain",
+    );
+    expect(shortcutFor(key("i"), { inLab: true, singleKey: true, present: false })).toBe("side");
+    expect(shortcutFor(key("i"), { inLab: false, singleKey: true, present: false })).toBeNull();
+  });
+});
+
 describe("hide-the-answer shortcut", () => {
   it("maps A to the answers toggle in the lab, and nowhere else", () => {
     const e = new KeyboardEvent("keydown", { key: "a" });

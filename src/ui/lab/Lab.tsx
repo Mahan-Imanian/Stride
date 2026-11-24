@@ -11,25 +11,33 @@ import { Present } from "./Present";
 import { Setup } from "./Setup";
 import { ExperimentBar } from "./ExperimentBar";
 import { Legend, NowCaption, Stage } from "./Stage";
+import { StageToolbar, TOOLBAR_PX } from "./StageToolbar";
 import { Transport } from "./Transport";
 import { usePlaybackDriver } from "./playback";
 import { useLabRoute } from "./useLabRoute";
 
 function StageColumn() {
   useCommitCounter("stage column");
+  const explain = useUI((s) => s.panels.explain);
+  const compare = useLab((s) => !!s.runB);
+  const caption = explain ? (compare ? STAGE_ROWS_PX.captionCompare : STAGE_ROWS_PX.caption) : 0;
   return (
     <section
       className="grid min-h-0 min-w-0 bg-field"
       style={{
         gridTemplateColumns: "minmax(0,1fr)",
-        gridTemplateRows: `minmax(0,1fr) auto ${STAGE_ROWS_PX.legend}px ${STAGE_ROWS_PX.transport}px`,
+        gridTemplateRows: `${TOOLBAR_PX}px minmax(0,1fr) ${caption}px ${STAGE_ROWS_PX.legend}px ${STAGE_ROWS_PX.transport}px`,
       }}
       aria-label="Visualization"
     >
+      <StageToolbar />
       <div className="min-h-0 min-w-0 [contain:strict]">
         <Stage />
       </div>
-      <NowCaption />
+      {/* Hidden captions stay mounted so screen readers still hear each step. */}
+      <div className="min-h-0 overflow-hidden">
+        <NowCaption />
+      </div>
       <div className="h-7 overflow-hidden border-t border-rule bg-surface px-4">
         <Legend />
       </div>
@@ -50,6 +58,7 @@ export function Lab({
   const layout = useLayout();
   const compact = useIsCompact();
   const present = useUI((s) => s.present);
+  const side = useUI((s) => s.side);
   const [error, dismiss] = useLabRoute(query);
   usePlaybackDriver();
   const gridAspect = useLab((s) =>
@@ -109,9 +118,11 @@ export function Lab({
       <ExperimentBar />
       <div
         className={
-          layout === "wide"
-            ? "grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_440px]"
-            : "grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_340px]"
+          !side
+            ? "grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)]"
+            : layout === "wide"
+              ? "grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_440px]"
+              : "grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_340px]"
         }
       >
         {
@@ -138,9 +149,11 @@ export function Lab({
           </DialogPrimitive.Root>
         }
         <StageColumn />
-        <aside className="min-h-0 border-l border-rule bg-surface" aria-label="Inspector">
-          <Inspector />
-        </aside>
+        {side && (
+          <aside className="min-h-0 border-l border-rule bg-surface" aria-label="Inspector">
+            <Inspector />
+          </aside>
+        )}
       </div>
     </div>
   );

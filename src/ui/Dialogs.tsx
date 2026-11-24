@@ -273,6 +273,8 @@ const SHORTCUTS: [string, string[]][] = [
   ["Save experiment", [`${MOD} S`]],
   ["Bookmark the current step", ["B"]],
   ["Hide or show the answers", ["A"]],
+  ["Show or hide the explanation", ["E"]],
+  ["Show or hide the side panel", ["I"]],
   ["Present full screen / exit", ["P", "Esc"]],
   ["In presentation: code, state, explanation, metrics", ["C", "S", "E", "M"]],
   ["Frame monitor", ["H"]],

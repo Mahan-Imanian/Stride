@@ -209,6 +209,21 @@ export const PanelLeft = (p: P) => (
     <path d="M2 3h12v10H2zM6 3v10" />
   </Svg>
 );
+export const PanelRight = (p: P) => (
+  <Svg {...p}>
+    <path d="M2 3h12v10H2zM10 3v10" />
+  </Svg>
+);
+export const Captions = (p: P) => (
+  <Svg {...p}>
+    <path d="M2 3h12v10H2zM4.5 7.5h7M4.5 10h4.5" />
+  </Svg>
+);
+export const Fullscreen = (p: P) => (
+  <Svg {...p}>
+    <path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10" />
+  </Svg>
+);
 export const Sun = (p: P) => (
   <Svg {...p}>
     <circle cx="8" cy="8" r="3" />

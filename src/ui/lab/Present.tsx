@@ -12,6 +12,7 @@ import { exitPresentation } from "../presentation";
 import { CodePanel } from "./Code";
 import { TagAB } from "./Panels";
 import { NowCaption, Stage } from "./Stage";
+import { StageToolbar, TOOLBAR_PX } from "./StageToolbar";
 import { StatePanel } from "./StatePanel";
 import { Transport } from "./Transport";
 
@@ -72,6 +73,7 @@ export function Present() {
       style={{
         gridTemplateRows: [
           `${PRESENT_ROWS_PX.header}px`,
+          `${compact ? 0 : TOOLBAR_PX}px`,
           "minmax(0,1fr)",
           `${panels.explain ? PRESENT_ROWS_PX.caption : 0}px`,
           `${compact ? STAGE_ROWS_PX.phoneTransport : PRESENT_ROWS_PX.transport}px`,
@@ -108,7 +110,7 @@ export function Present() {
               aria-pressed={panels[t.id]}
               onClick={() => togglePanel(t.id)}
               className={cn(
-                "flex h-8 items-center gap-1.5 rounded border px-2.5 text-xs transition-colors",
+                "flex h-9 items-center gap-1.5 rounded border px-3 text-sm transition-colors",
                 panels[t.id]
                   ? "border-ink bg-ink text-surface"
                   : "border-rule-strong text-ink-2 hover:text-ink",
@@ -120,13 +122,14 @@ export function Present() {
           ))}
           <button
             onClick={exitPresentation}
-            className="ml-2 flex h-8 items-center gap-1.5 rounded border border-rule-strong px-2.5 text-xs text-ink-2 hover:text-ink"
+            className="ml-2 flex h-9 items-center gap-1.5 rounded border border-rule-strong px-3 text-sm text-ink-2 hover:text-ink"
             aria-label="Exit presentation"
           >
             <Close size={14} /> Esc
           </button>
         </div>
       </header>
+      <div className="min-h-0 overflow-hidden">{!compact && <StageToolbar />}</div>
       <div
         className="grid min-h-0"
         style={{ gridTemplateColumns: side ? "minmax(0,1fr) 400px" : "minmax(0,1fr)" }}

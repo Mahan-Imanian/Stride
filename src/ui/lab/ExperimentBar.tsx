@@ -7,6 +7,7 @@ import { position, totalLength, useLab } from "@/store/lab";
 import { useUI } from "@/store/ui";
 import { ChevronRight } from "../icons";
 import { IconButton } from "../primitives";
+import { ViewControls } from "./StageToolbar";
 
 export function ExperimentBar({ compact = false }: { compact?: boolean }) {
   const scenarioId = useUI((s) => s.scenario);
@@ -37,23 +38,53 @@ export function ExperimentBar({ compact = false }: { compact?: boolean }) {
     navigate(`/lab?s=${next.id}`);
   };
 
+  const resultLine = (
+    <p
+      className={cn(
+        "min-w-0 rounded bg-sunken px-2 py-0.5",
+        compact ? "mt-1.5 line-clamp-2 h-11 text-sm" : "truncate text-md",
+        !result && (compact ? "invisible" : "hidden"),
+      )}
+      role="status"
+      title={result ?? undefined}
+    >
+      <span className="mr-1.5 font-bold">Result</span>
+      {result ?? "Not finished yet"}
+    </p>
+  );
+
   return (
     <div
       className={cn(
-        "flex shrink-0 items-start gap-4 border-b border-rule bg-bg",
+        "flex shrink-0 items-center gap-4 border-b border-rule bg-bg",
         compact ? "px-4 py-3" : "px-5 py-3.5",
       )}
     >
       <div className="min-w-0 flex-1">
-        <h1 className={cn("font-bold", compact ? "text-xl" : "text-2xl")}>{title}</h1>
-        <p className={cn("mt-0.5 text-ink-2", compact ? "text-sm" : "text-md")}>{question}</p>
-        {result && (
-          <p className={cn("mt-1.5", compact ? "text-sm" : "text-md")} role="status">
-            <span className="mr-1.5 font-bold">Result</span>
-            {result}
-          </p>
-        )}
+        {/* The result has a fixed slot, so the board below never moves when it appears. */}
+        <div
+          className={cn(
+            "flex min-w-0 items-center gap-4 overflow-hidden",
+            compact ? "h-7" : "h-[34px]",
+          )}
+        >
+          <h1
+            className={cn(
+              "min-w-0 shrink-0 truncate font-bold",
+              result && !compact && "max-w-[55%]",
+              compact ? "text-xl" : "text-2xl",
+            )}
+          >
+            {title}
+          </h1>
+          {!compact && resultLine}
+        </div>
+        <p className={cn("mt-0.5 truncate text-ink-2", compact ? "text-sm" : "text-md")}>
+          {question}
+        </p>
+        {compact && resultLine}
       </div>
+      {!compact && <ViewControls />}
       {matches && (
         <nav aria-label="Experiments" className="flex shrink-0 items-center gap-1">
           <IconButton label="Previous experiment" onClick={() => go(-1)}>

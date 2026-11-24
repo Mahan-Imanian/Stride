@@ -34,6 +34,7 @@ export type ShortcutAction =
   | "exit-present"
   | "hud"
   | "bookmark"
+  | "side"
   | `panel:${PresentPanel}`
   | `tool:${Tool}`;
 
@@ -106,6 +107,8 @@ export function shortcutFor(
   if (k === "h") return "hud";
   if (k === "b") return "bookmark";
   if (k === "a") return "answers";
+  if (k === "e") return "panel:explain";
+  if (k === "i") return "side";
   const tools: Record<string, Tool> = {
     "1": "wall",
     "2": "weight",
@@ -184,6 +187,8 @@ function runShortcut(action: ShortcutAction) {
       return lab.toggleBookmark();
     case "answers":
       return ui.setAnswersHidden(!ui.answersHidden);
+    case "side":
+      return ui.setSide(!ui.side);
     default:
       if (action.startsWith("panel:")) return ui.togglePanel(action.slice(6) as PresentPanel);
       if (action.startsWith("tool:") && lab.exp.family === "grid")
